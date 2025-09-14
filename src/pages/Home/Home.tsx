@@ -5,6 +5,8 @@ import { getGlobal, setGlobal } from "../../utils/storage"; // for data storage
 import { useAppContext } from "../../context/AppContext"; // for events updates
 import MyModal from '../../utils/Modal';
 import '../../utils/Modal.css';
+import Button from 'react-bootstrap/Button';
+import Collapse from 'react-bootstrap/Collapse';
 
 const Home: React.FC = () => {
   const { user, setUser } = useAppContext();
@@ -15,6 +17,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   type MyData = { foo: string; };
   const { data, setData } = useAppContext<MyData>();
+  const [open, setOpen] = useState(false);
 
   interface ApiResponse {
     message: string;
@@ -62,18 +65,18 @@ const Home: React.FC = () => {
     <div style={{ width: '100%' }}>
       <div style={{width: '400px', margin: '0 auto', backgroundColor: '#eee', padding: '16px', borderRadius: '8px'}}>
         <div>
-          <h2>User: {user ?? "No user logged in"}</h2>
+          <h6>User: {user ?? "No user logged in"}</h6>
           <button onClick={() => updateI()}>Set AppContext User to Alice</button>
         </div>
   
         <div>
-          <h2>User: {global ?? "No user logged in"}</h2>
+          <h6>User: {global ?? "No user logged in"}</h6>
           <button onClick={() => setGlobalstate("global Alice")}>Set global User to Alice</button>
         </div>
   
-        <h2>Toggle Div Example</h2>
-        <div className="p-4">
-          <button onClick={toggleDiv} className="bg-blue-500 text-white px-4 py-2 rounded">
+        <h6>Toggle Div Example</h6>
+        <div className="p-0">
+          <button onClick={toggleDiv} className="bg-blue-500 text-black px-2 py-1 rounded">
             {isVisible ? 'Hide' : 'Show'} Content
           </button>
   
@@ -89,10 +92,25 @@ const Home: React.FC = () => {
         <button onClick={fetchData}>Fetch Data</button>
 
         <br></br><br></br>
-        <button onClick={() => navigate('todo')} className="bg-blue-500 text-white px-4 py-2 rounded">
+        <button onClick={() => navigate('todo')} className="bg-blue-500 text-black px-2 py-1 rounded">
           Load Todo List
         </button>
         
+      <br></br><br></br>
+        <Button
+          onClick={() => setOpen(!open)}
+          aria-controls="example-collapse-text"
+          aria-expanded={open}
+        >
+          {open! ? 'Collapse' : 'Uncollapse'} Content
+        </Button>
+        <Collapse in={open}>
+          <div id="example-collapse-text">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+            terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+            labore wes anderson cred nesciunt sapiente ea proident.
+          </div>
+        </Collapse>
       </div>
 
       {/* Modal window - the contant of MyModal will be project in children prop */}

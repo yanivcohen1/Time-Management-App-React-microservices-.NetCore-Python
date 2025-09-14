@@ -3,6 +3,7 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AppProvider } from "./context/AppContext";
