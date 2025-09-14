@@ -6,7 +6,7 @@ import Home from "./pages/Home/Home";
 import TodoList from "./pages/Home/todo/TodoList";
 import Contact from "./pages/Contact";
 import About from './pages/About/About';
-import AboutMe from './pages/About/AboutMe';
+import AboutMe from './pages/About/about-me/AboutMe';
 import { useAuth } from './auth/AuthContext';
 import { PrivateRoute } from './routes/PrivateRoute';
 import AdminPage from './pages/AdminPage';
