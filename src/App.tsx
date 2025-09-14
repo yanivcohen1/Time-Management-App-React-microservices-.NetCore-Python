@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import LoadingBar from 'react-top-loading-bar';
 import Home from "./pages/Home/Home";
 import TodoList from "./pages/Home/todo/TodoList";
@@ -76,8 +76,11 @@ const App: React.FC = () => {
         </nav>
   
         <Routes>
-          <Route path="/home" element={<Home />}>
-            <Route path="todo/" element={<TodoList />} />
+          {/* Redirect root to /home */}
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<Home />}
+          >
+            <Route path="todo" element={<TodoList />} />
           </Route>
           <Route path="/about/:aboutId" element={<About />} >
             <Route path="about-me/:aboutMeId" element={<AboutMe />} />
