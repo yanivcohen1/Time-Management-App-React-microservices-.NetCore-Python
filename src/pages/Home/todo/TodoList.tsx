@@ -10,7 +10,7 @@ const TodoList: React.FC = () => {
   const [input, setInput] = useState<string>('');
   const { user } = useAppContext();
   const [msg, setMsg] = useState<string>("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Load todos from localStorage
   const initTodo = (): Todo[] => {
     let todos: Todo[] = []

@@ -16,6 +16,7 @@
     "axios-mock-adapter": "^2.1.0",
     "bootstrap": "^5.3.8",
     "my-todo-app": "file:",
+    "primereact": "^10.9.7",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.0",

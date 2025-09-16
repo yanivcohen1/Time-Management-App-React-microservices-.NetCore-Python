@@ -4,10 +4,12 @@ import MockAdapter from 'axios-mock-adapter';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "primereact/resources/themes/lara-light-cyan/theme.css";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AppProvider } from "./context/AppContext";
 import { AuthProvider } from "./auth/AuthContext";
+import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 
 console.log("✅ AppProvider mounted");
 // mock a 1.5s delay for GET /api/data
@@ -18,7 +20,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AppProvider>
     <AuthProvider>
+    <PrimeReactProvider>
       <App />
+    </PrimeReactProvider>
     </AuthProvider>
     </AppProvider>
   </React.StrictMode>

@@ -16,3 +16,8 @@ code {
   font-weight: bold;
   color: #080699;
 }
+
+.custom-breadcrumb .p-breadcrumb {
+  padding: 0rem;
+  padding-top: 0.8rem;
+}
