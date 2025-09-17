@@ -104,7 +104,7 @@ const Home: React.FC = () => {
   
         <h6>Toggle Div Example</h6>
         <div className="p-0">
-          <button onClick={toggleDiv} className="bg-blue-500 text-black px-2 py-1 rounded">
+          <button onClick={toggleDiv} className="bg-blue-500 text-black px-1 py-0 rounded">
             {isVisible ? 'Hide' : 'Show'} Content
           </button>
   
