@@ -7,6 +7,8 @@ import MyModal from '../../utils/Modal';
 import '../../utils/Modal.css';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faUser, faList } from '@fortawesome/free-solid-svg-icons';
 
 const Home: React.FC = () => {
   const { user, setUser } = useAppContext();
@@ -64,14 +66,15 @@ const Home: React.FC = () => {
   return (
     <div style={{ width: '100%' }}>
       <div style={{width: '400px', margin: '0 auto', backgroundColor: '#eee', padding: '16px', borderRadius: '8px'}}>
+        <h2 style={{ textAlign: 'center' }}><FontAwesomeIcon icon={faHome} /> Home Page</h2>
         <div>
           <h6>User: {user ?? "No user logged in"}</h6>
-          <button onClick={() => updateI()}>Set AppContext User to Alice</button>
+          <button onClick={() => updateI()}><FontAwesomeIcon icon={faUser} /> Set AppContext User to Alice</button>
         </div>
   
         <div>
           <h6>User: {global ?? "No user logged in"}</h6>
-          <button onClick={() => setGlobalstate("global Alice")}>Set global User to Alice</button>
+          <button onClick={() => setGlobalstate("global Alice")}><FontAwesomeIcon icon={faUser} /> Set global User to Alice</button>
         </div>
   
         <h6>Toggle Div Example</h6>
@@ -93,7 +96,7 @@ const Home: React.FC = () => {
 
         <br></br><br></br>
         <button onClick={() => navigate('todo')} className="bg-blue-500 text-black px-2 py-1 rounded">
-          Load Todo List
+          <FontAwesomeIcon icon={faList} /> Load Todo List
         </button>
         
       <br></br><br></br>
