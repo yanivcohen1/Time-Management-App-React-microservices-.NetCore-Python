@@ -136,7 +136,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   input: {
     flex: 1,
-    padding: '10px',
+    padding: '8px',
     fontSize: '16px'
   },
   addButton: {

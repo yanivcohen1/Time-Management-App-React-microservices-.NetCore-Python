@@ -12,8 +12,8 @@ import { faHome, faUser, faList } from '@fortawesome/free-solid-svg-icons';
 import { BreadCrumb } from "primereact/breadcrumb";
 
 const Home: React.FC = () => {
-  const { user, setUser } = useAppContext();
-  const [global, setGlobalstate] = useState<string>(getGlobal);
+  const { user, setUser } = useAppContext(); // return json
+  const [global, setGlobalstate] = useState<string>(getGlobal); // return array
   const [isVisible, setIsVisible] = useState(false);
   const [i, setI] = useState(parseInt(user?.split(" ").pop() || "0") || 0);
   const [isModalOpen, setIsModalOpen] = useState(false);
