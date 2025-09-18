@@ -128,11 +128,10 @@ const Home: React.FC = () => {
           {open! ? 'Collapse' : 'Uncollapse'} Content
         </Button>
         <Collapse in={open}>
-          <div id="example-collapse-text">
-            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-            terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-            labore wes anderson cred nesciunt sapiente ea proident.
-          </div>
+          <div className="bg-gray-100 rounded shadow" id="example-collapse-text">
+              This is the content inside the div. <br></br>
+              that can be collapsed.
+            </div>
         </Collapse>
       </div>
 
