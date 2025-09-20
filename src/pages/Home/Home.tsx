@@ -102,7 +102,7 @@ const Home: React.FC = () => {
   
         <div>
           <h6>User: {global ?? "No user logged in"}</h6>
-          <button onClick={() => setGlobalstate("global Alice")}><FontAwesomeIcon icon={faUser} /> Set global User to Alice</button>
+          <button onClick={() => setGlobalstate("global Alice")}><FontAwesomeIcon icon={faList} /> Set global User to Alice</button>
         </div>
   
         <h6>Toggle Div Example</h6>
