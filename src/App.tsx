@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import axios, { AxiosResponse, InternalAxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 import { getData, saveData } from './utils/storage';
@@ -20,9 +20,10 @@ const NotFound = () => <h1>404 - Page Not Found</h1>;
 
 const App: React.FC = () => {
   const { isAuthenticated, role } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
   const loadingRef = useRef<InstanceType<typeof LoadingBar>>(null!);
 
-    useEffect(() => {
+  useEffect(() => {
     // start on any request
     const reqId = axios.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
@@ -63,29 +64,45 @@ const App: React.FC = () => {
     <>
       <Router>
         <div style={{ display: 'flex' }}>
-          <nav style={{ padding: '1rem', width: '100px', borderRight: '1px solid #ccc', display: 'flex', flexDirection: 'column' }}>
-            <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : undefined}>Home</NavLink>
-            {!isAuthenticated ? (
-                <NavLink to="/login" className={({ isActive }) => isActive ? 'active' : undefined}>Login</NavLink>
-              ) : (
-                <NavLink to="/logout" className={({ isActive }) => isActive ? 'active' : undefined}>Logout</NavLink>
-              )}
-            {isAuthenticated && (role === 'user' || role === 'admin') && (
-                <NavLink to="/user" className={({ isActive }) => isActive ? 'active' : undefined}>User</NavLink>
-              )}
-            {isAuthenticated && role === 'admin' && (
-                <NavLink to="/admin" className={({ isActive }) => isActive ? 'active' : undefined}>Admin</NavLink>
-              )}
-            <NavLink to="/contact?id=1&name=yan" className={({ isActive }) => isActive ? 'active' : undefined}>Contact</NavLink>
-            <NavLink to="/about/1" className={({ isActive }) => isActive ? 'active' : undefined}>About</NavLink>
-          </nav>
+          {/* Mobile menu icon, hidden when menu is open */}
+          {!menuOpen && (
+            <div className="menu-icon" onClick={() => setMenuOpen(true)}>☰</div>
+          )}
+          {/* Side navigation wrapper */}
+          <div>
+            <nav className={`side-nav${menuOpen ? ' open' : ''}`} style={{ padding: '1rem', width: '100px', borderRight: '1px solid #ccc', display: 'flex', flexDirection: 'column' }}>
+             <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : undefined}>Home</NavLink>
+             {!isAuthenticated ? (
+               <NavLink to="/login" className={({ isActive }) => isActive ? 'active' : undefined}>Login</NavLink>
+             ) : (
+               <NavLink to="/logout" className={({ isActive }) => isActive ? 'active' : undefined}>Logout</NavLink>
+             )}
+             {isAuthenticated && (role === 'user' || role === 'admin') && (
+               <NavLink to="/user" className={({ isActive }) => isActive ? 'active' : undefined}>User</NavLink>
+             )}
+             {isAuthenticated && role === 'admin' && (
+               <NavLink to="/admin" className={({ isActive }) => isActive ? 'active' : undefined}>Admin</NavLink>
+             )}
+             <NavLink to="/contact?id=1&name=yan" className={({ isActive }) => isActive ? 'active' : undefined}>Contact</NavLink>
+             <NavLink to="/about/1" className={({ isActive }) => isActive ? 'active' : undefined}>About</NavLink>
+            </nav>
+          </div>
+           
+          {/* Overlay to close menu */}
+          {menuOpen && (
+           <div
+             className="overlay"
+             onClick={() => setMenuOpen(false)}
+             style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 999 }}
+           />
+         )}
           
-          <div style={{ flex: 1, padding: '1rem' }}>
-            <Routes>
-              {/* Redirect root to /home */}
-              <Route path="/" element={<Navigate to="/home" replace />} />
-              <Route path="/home" element={<Home />}
-              >
+          <div className="main-content" style={{ flex: 1, padding: '1rem' }}>
+             <Routes>
+               {/* Redirect root to /home */}
+               <Route path="/" element={<Navigate to="/home" replace />} />
+               <Route path="/home" element={<Home />}
+               >
                 <Route path="todo" element={<TodoList />} />
               </Route>
               <Route path="/about/:aboutId" element={<About />} >
@@ -104,14 +121,14 @@ const App: React.FC = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
-        </div>
-      </Router>
-      <div style={{ padding: 20 }}>
-        <LoadingBar color="#29d" height={3} ref={loadingRef} />
-      </div>
-    </>
-  );
-};
+       </div>
+     </Router>
+     <div style={{ padding: 20 }}>
+       <LoadingBar color="#29d" height={3} ref={loadingRef} />
+     </div>
+   </>
+ );
+}
 
 export default App;
 
