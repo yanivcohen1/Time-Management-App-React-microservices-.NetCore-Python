@@ -70,6 +70,7 @@ const App: React.FC = () => {
 interface InnerAppProps {
   loadingRef: React.RefObject<InstanceType<typeof LoadingBar>>;
 }
+// Separate component to use hooks like useLocation inside the router life cycle changes
 const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   const { isAuthenticated, role } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
