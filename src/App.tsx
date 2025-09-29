@@ -75,6 +75,20 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const location = useLocation();
+  const navRef = useRef<HTMLElement>(null!);
+
+  // close side menu when clicking outside
+  useEffect(() => {
+    if (!menuOpen) return
+    
+    function handleClickOutside(event: MouseEvent) {
+      if (menuOpen && navRef.current && !navRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
 
   // Sync submenu open state with URL
   useEffect(() => {
@@ -87,8 +101,8 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
       {!menuOpen && (
         <div className="menu-icon" onClick={() => setMenuOpen(true)}>☰</div>
       )}
-      {/* Side nav */}
-      <nav className={`side-nav${menuOpen ? ' open' : ''}`} style={{ padding: '1rem', width: '150px', borderRight: '1px solid #ccc', display: 'flex', flexDirection: 'column' }}>
+  {/* Side nav */}
+  <nav ref={navRef} className={`side-nav${menuOpen ? ' open' : ''}`} style={{ padding: '1rem', width: '150px', borderRight: '1px solid #ccc', display: 'flex', flexDirection: 'column' }}>
         <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : undefined} onClick={() => { setMenuOpen(false); setAboutOpen(false); }}>
           <FontAwesomeIcon icon={faHome} style={{ marginRight: '0.5rem' }} /> Home
         </NavLink>
@@ -118,7 +132,7 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
           <NavLink
             to="/about/1"
             className={({ isActive }) => isActive ? 'active' : undefined}
-            onClick={() => { setMenuOpen(false); setAboutOpen(prev => !prev); }}
+            onClick={() => setAboutOpen(prev => !prev)}
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
           >
             <FontAwesomeIcon
