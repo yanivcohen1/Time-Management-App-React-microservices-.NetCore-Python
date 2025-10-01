@@ -75,6 +75,7 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   const { isAuthenticated, role } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [showCookieBanner, setShowCookieBanner] = useState(false);
   const location = useLocation();
   const navRef = useRef<HTMLElement>(null!);
 
@@ -96,6 +97,18 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   useEffect(() => {
     setAboutOpen(location.pathname.startsWith('/about'));
   }, [location.pathname]);
+
+  useEffect(() => {
+    const consent = getData<boolean>('cookieConsent');
+    if (consent !== true) {
+      setShowCookieBanner(true);
+    }
+  }, []);
+
+  const handleAcceptCookies = () => {
+    saveData('cookieConsent', true);
+    setShowCookieBanner(false);
+  };
 
   return (
     <div style={{ display: 'flex' }}>
@@ -187,6 +200,17 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
         </Routes>
       </div>
       <LoadingBar color="#29d" height={3} ref={loadingRef} />
+      {showCookieBanner && (
+        <div className="cookie-banner" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: '#fff', padding: '1rem', borderTop: '1px solid #ccc', textAlign: 'center' }}>
+          <div>
+            By continuing to use this website, you agree that this website can store cookies on this device.&nbsp;&nbsp;
+          
+            <button onClick={handleAcceptCookies}>
+              Accept
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
