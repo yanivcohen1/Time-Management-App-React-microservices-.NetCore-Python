@@ -201,7 +201,7 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
       </div>
       <LoadingBar color="#29d" height={3} ref={loadingRef} />
       {showCookieBanner && (
-        <div className="cookie-banner" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: '#333', color:'white', padding: '1rem', borderTop: '1px solid #ccc', textAlign: 'center' }}>
+        <div className="cookie-banner main-content" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: '#333', color:'white', padding: '1rem', borderTop: '1px solid #ccc', textAlign: 'center' }}>
           <div>
             By continuing to use this website, you agree that this website can store cookies on this device.&nbsp;&nbsp;
           
