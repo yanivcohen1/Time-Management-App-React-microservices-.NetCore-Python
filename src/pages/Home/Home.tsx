@@ -32,9 +32,11 @@ const Home: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [position, setPosition] = useState<ToastPosition>("top-center");
   const toastContainerStyle: React.CSSProperties = {
-    zIndex: 1,
-    position: 'sticky',
-    ...(position.includes('bottom') ? { bottom: 0 } : { top: 0 })
+    zIndex: 9999,
+    position: 'fixed',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    ...(position.includes('bottom') ? { bottom: '1rem' } : { top: '1rem' })
   };
   const [showSelectBox, setShowSelectBox] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>('one');
