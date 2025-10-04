@@ -41,6 +41,24 @@ const Home: React.FC = () => {
   const [showSelectBox, setShowSelectBox] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>('one');
   const [confirmedOption, setConfirmedOption] = useState<string>('');
+  // Add sticky save message state and toast message state
+  const [showStickySave, setShowStickySave] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string>('');
+  // Style for sticky save message banner
+  const stickyStyle: React.CSSProperties = {
+    position: 'sticky',
+    top: '0.2rem',
+    backgroundColor: '#fff',
+    padding: '8px 16px',
+    zIndex: 1000,
+    border: '1px solid #ccc',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // size banner to content and center horizontally
+    width: 'fit-content',
+    margin: '0 auto',
+  };
   const items = [
     {
       label: "Home",
@@ -114,11 +132,28 @@ const Home: React.FC = () => {
     }
   };
 
+  // Handler for save confirmation
+  const handleSave = (confirm: boolean) => {
+    setToastMessage(confirm ? 'Saved successfully!' : 'Save cancelled');
+    setPosition('top-center');
+    setShowToast(true);
+    setShowStickySave(false);
+  };
+
   return (
   <>
-    <div className="p-4 custom-breadcrumb">
+    <div className="p-1 custom-breadcrumb">
         <BreadCrumb model={items} home={home} />
     </div>
+    {showStickySave && (
+      <div style={stickyStyle}>
+        <span>Do you want to save changes? &nbsp;</span>
+        <div>
+          <button className="btn btn-primary btn-sm me-2" onClick={() => handleSave(true)}>Yes</button>
+          <button className="btn btn-secondary btn-sm" onClick={() => handleSave(false)}>No</button>
+        </div>
+      </div>
+    )}
     <div style={{ width: '100%' }}>
       {isVisible && (
         <div style={{width: '400px', margin: '0 auto', backgroundColor: '#eee', padding: '16px', borderRadius: '8px'}}>
@@ -170,6 +205,12 @@ const Home: React.FC = () => {
           <Button onClick={()=>{setShowToast(true); setPosition("bottom-center")}} className="mb-2">
             Toast <strong>with</strong> Animation
           </Button>
+          {/* Button to manually show save message banner */}
+          <div style={{ margin: '0.1rem 0' }}>
+            <button className="btn btn-outline-primary" onClick={() => setShowStickySave(true)}>
+              Show Save sticky Message
+            </button>
+          </div>
           <br></br>
           <button onClick={() => setShowSelectBox(true)}>Show Selection Box</button>
           {confirmedOption && <span style={{ marginLeft: '8px', fontWeight: 'bold' }}>Selected: {confirmedOption}</span>}
@@ -219,7 +260,7 @@ const Home: React.FC = () => {
             <small>11 mins ago</small>
           </Toast.Header>
             <Toast.Body className='text-white'>
-              Hello, world! This is a toast message.
+              {toastMessage}
             </Toast.Body>
         </Toast>
       </ToastContainer>
