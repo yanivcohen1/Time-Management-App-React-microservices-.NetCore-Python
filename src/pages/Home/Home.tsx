@@ -52,6 +52,7 @@ const Home: React.FC = () => {
     padding: '8px 16px',
     zIndex: 1000,
     border: '1px solid #ccc',
+    boxShadow: '2px 2px rgba(0,0,0,0.3)',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -135,7 +136,7 @@ const Home: React.FC = () => {
   // Handler for save confirmation
   const handleSave = (confirm: boolean) => {
     setToastMessage(confirm ? 'Saved successfully!' : 'Save cancelled');
-    setPosition('top-center');
+    setPosition('bottom-center');
     setShowToast(true);
     setShowStickySave(false);
   };
