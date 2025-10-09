@@ -1,20 +1,23 @@
 // pages/LoginPage.tsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 const LoginPage: React.FC = () => {
     const { isAuthenticated, login } = useAuth();
     const [role, setRole] = useState<'user' | 'admin'>('user');
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogin = () => {
         login(role);
-        if (role === 'admin') {
-            navigate('/admin'); // redirect to the Admin page
-        } else {
-            navigate('/user'); // redirect to the User page
-        }
+        const from = (location.state as { from?: string } | undefined)?.from || '/';
+        navigate(from, { replace: true });
+        // if (role === 'admin') {
+        //     navigate('/admin'); // redirect to the Admin page
+        // } else {
+        //     navigate('/user'); // redirect to the User page
+        // }
     };
 
     return (
