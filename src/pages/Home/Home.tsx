@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import "../../animation/slide-right.css";
 import axios from 'axios';
@@ -21,7 +21,6 @@ import Toast from 'react-bootstrap/Toast';
 import ToastContainer, { ToastPosition } from 'react-bootstrap/ToastContainer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUser, faList } from '@fortawesome/free-solid-svg-icons';
-import { BreadCrumb } from "primereact/breadcrumb";
 
 const Home: React.FC = () => {
   const { user, setUser } = useAppContext(); // return json
@@ -30,7 +29,6 @@ const Home: React.FC = () => {
   const [isVisibleB, setIsVisibleB] = useState(false);
   const [i, setI] = useState(parseInt(user?.split(" ").pop() || "0") || 0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
   const outletRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement | null>(null);
@@ -59,32 +57,6 @@ const Home: React.FC = () => {
   // Add sticky save message state and toast message state
   const [showStickySave, setShowStickySave] = useState(true);
   const [toastMessage, setToastMessage] = useState<string>('');
-  const breadcrumbClassName = `flex-grow-1 rounded-3 px-3 py-2 shadow-sm ${isDarkTheme ? 'bg-dark text-white border border-secondary' : 'bg-white text-body border border-light'}`;
-  const breadcrumbItemClass = isDarkTheme ? 'text-white' : 'text-secondary';
-  const breadcrumbSeparatorClass = isDarkTheme ? 'text-secondary' : 'text-muted';
-  const items = [
-    {
-      label: "Home",
-      icon: "pi pi-home",
-      command: () => {
-        setIsVisible(true);
-        navigate('/home')
-        //console.log("Home clicked!");
-      }
-    },
-    {
-      label: "Todo",
-      command: () => {
-        setIsVisible(false);
-        navigate('todo')
-        // alert("Products clicked!");
-      }
-  }];
-
-  const home = {
-    icon: "pi pi-home",
-    url: "/"
-  };
   interface ApiResponse {
     message: string;
   }
@@ -143,28 +115,13 @@ const Home: React.FC = () => {
     setShowStickySave(false);
   };
 
+  useEffect(() => {
+    const shouldShow = !location.pathname.startsWith('/home/todo');
+    setIsVisible(shouldShow);
+  }, [location.pathname]);
+
   return (
     <>
-  <div className={isDarkTheme ? 'bg-dark text-white py-2 border-bottom border-secondary' : 'bg-light py-2 border-bottom'}>
-        <Container fluid="lg" className="d-flex align-items-center">
-          <BreadCrumb
-            model={items}
-            home={home}
-            className={breadcrumbClassName}
-            data-bs-theme={theme}
-            pt={{
-              root: { className: 'border-0 bg-transparent p-0' },
-              menu: { className: 'mb-0 bg-transparent d-flex align-items-center gap-1' },
-              menuitem: { className: `${breadcrumbItemClass} d-flex align-items-center` },
-              action: { className: 'bg-transparent border-0 text-decoration-none' },
-              label: { className: breadcrumbItemClass },
-              icon: { className: breadcrumbItemClass },
-              separator: { className: `${breadcrumbSeparatorClass} mx-2` }
-            }}
-          />
-        </Container>
-      </div>
-
       {showStickySave && (
         <Container fluid="lg" className="my-2 d-flex justify-content-center" style={stickySaveWrapperStyle}>
           <div

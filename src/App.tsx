@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
+import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import axios, { AxiosResponse, InternalAxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 import { getData, saveData } from './utils/storage';
 import LoadingBar from 'react-top-loading-bar';
@@ -16,8 +16,10 @@ import LoginPage from './pages/LoginPage';
 import Unauthorized from './pages/Unauthorized';
 import Logout from './pages/Logout';
 import Collapse from 'react-bootstrap/Collapse';
+import Container from 'react-bootstrap/Container';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faHome, faSignInAlt, faSignOutAlt, faUser, faUsers, faEnvelope, faInfoCircle, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 const NotFound = () => <h1>404 - Page Not Found</h1>;
 
@@ -73,6 +75,7 @@ interface InnerAppProps {
 // Separate component to use hooks like useLocation inside the router life cycle changes
 const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   const { isAuthenticated, role } = useAuth();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [showCookieBanner, setShowCookieBanner] = useState(false);
@@ -82,6 +85,7 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   });
   const location = useLocation();
   const navRef = useRef<HTMLElement>(null!);
+  const isDarkTheme = theme === 'dark';
 
   // close side menu when clicking outside
   useEffect(() => {
@@ -117,6 +121,38 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
+
+  const breadcrumbItems = useMemo(() => ([
+    {
+      label: 'Home',
+      icon: 'pi pi-home',
+      command: () => {
+        setMenuOpen(false);
+        setAboutOpen(false);
+        navigate('/home');
+      },
+      disabled: location.pathname === '/home'
+    },
+    {
+      label: 'Todo',
+      command: () => {
+        setMenuOpen(false);
+        setAboutOpen(false);
+        navigate('/home/todo');
+      },
+      disabled: location.pathname.startsWith('/home/todo')
+    }
+  ]), [location.pathname, navigate]);
+
+  const breadcrumbHome = useMemo(() => ({
+    icon: 'pi pi-home',
+    url: '/'
+  }), []);
+
+  const breadcrumbClassName = `flex-grow-1 rounded-3 px-3 py-2 shadow-sm ${isDarkTheme ? 'bg-dark text-white border border-secondary' : 'bg-white text-body border border-light'}`;
+  const breadcrumbItemClass = isDarkTheme ? 'text-white' : 'text-secondary';
+  const breadcrumbSeparatorClass = isDarkTheme ? 'text-secondary' : 'text-muted';
+  const showHomeBreadcrumb = location.pathname.startsWith('/home');
 
   const handleAcceptCookies = () => {
     saveData('cookieConsent', true);
@@ -210,6 +246,27 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
         style={{ flex: 1, padding: '1rem' }}
         data-bs-theme={theme}
       >
+        {showHomeBreadcrumb && (
+          <div className={isDarkTheme ? 'bg-dark text-white py-2 border-bottom border-secondary' : 'bg-light py-2 border-bottom'}>
+            <Container fluid="lg" className="d-flex align-items-center">
+              <BreadCrumb
+                model={breadcrumbItems}
+                home={breadcrumbHome}
+                className={breadcrumbClassName}
+                data-bs-theme={theme}
+                pt={{
+                  root: { className: 'border-0 bg-transparent p-0' },
+                  menu: { className: 'mb-0 bg-transparent d-flex align-items-center gap-1' },
+                  menuitem: { className: `${breadcrumbItemClass} d-flex align-items-center` },
+                  action: { className: 'bg-transparent border-0 text-decoration-none' },
+                  label: { className: breadcrumbItemClass },
+                  icon: { className: breadcrumbItemClass },
+                  separator: { className: `${breadcrumbSeparatorClass} mx-2` }
+                }}
+              />
+            </Container>
+          </div>
+        )}
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
           <button
             type="button"
