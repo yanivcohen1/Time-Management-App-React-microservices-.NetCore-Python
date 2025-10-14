@@ -57,6 +57,8 @@ const Home: React.FC = () => {
   // Add sticky save message state and toast message state
   const [showStickySave, setShowStickySave] = useState(true);
   const [toastMessage, setToastMessage] = useState<string>('');
+  type ToastVariant = 'dark' | 'success' | 'danger' | 'secondary';
+  const [toastVariant, setToastVariant] = useState<ToastVariant>('dark');
   interface ApiResponse {
     message: string;
   }
@@ -101,15 +103,30 @@ const Home: React.FC = () => {
   const fetchData = async () => {
     try {
       const { data } = await axios.get<ApiResponse>('/api/data');
-      alert(data.message);
+      setToastMessage(data.message);
+      setToastVariant('success');
+      setPosition('top-center');
+      setShowToast(true);
     } catch (e) {
       console.error(e);
+      let errorMessage = 'Failed to fetch data';
+      if (axios.isAxiosError(e)) {
+        const responseMessage = (e.response?.data as Partial<ApiResponse> | undefined)?.message;
+        errorMessage = responseMessage ?? e.message ?? errorMessage;
+      } else if (e instanceof Error) {
+        errorMessage = e.message;
+      }
+      setToastMessage(errorMessage);
+      setToastVariant('danger');
+      setPosition('top-center');
+      setShowToast(true);
     }
   };
 
   // Handler for save confirmation
   const handleSave = (confirm: boolean) => {
     setToastMessage(confirm ? 'Saved successfully!' : 'Save cancelled');
+    setToastVariant(confirm ? 'success' : 'secondary');
     setPosition('bottom-center');
     setShowToast(true);
     setShowStickySave(false);
@@ -313,7 +330,7 @@ const Home: React.FC = () => {
         </TransitionGroup>
 
         <ToastContainer className="p-3" position={position} style={toastContainerStyle}>
-          <Toast show={showToast} onClose={() => setShowToast(false)} delay={3000} bg="dark" autohide>
+          <Toast show={showToast} onClose={() => setShowToast(false)} delay={3000} bg={toastVariant} autohide>
             <Toast.Header>
               <strong className="me-auto">Bootstrap</strong>
               <small>Just now</small>
