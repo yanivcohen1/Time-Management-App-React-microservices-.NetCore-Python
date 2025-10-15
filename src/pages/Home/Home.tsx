@@ -332,18 +332,11 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
         <ToastContainer className="p-3" position={position} style={toastContainerStyle}>
           <Toast show={showToast} onClose={() => setShowToast(false)} delay={3000} bg={toastVariant} autohide>
             <Toast.Header>
-              <strong className="me-auto">Bootstrap</strong>
-              <small>Just now</small>
+              <strong className="me-auto">System Message</strong>
+              <small></small>
             </Toast.Header>
             <Toast.Body className="text-white d-flex justify-content-between align-items-center gap-3">
               <span>{toastMessage}</span>
-              <Button
-                size="sm"
-                variant="outline-light"
-                onClick={() => setShowToast(false)}
-              >
-                Close
-              </Button>
             </Toast.Body>
           </Toast>
         </ToastContainer>
