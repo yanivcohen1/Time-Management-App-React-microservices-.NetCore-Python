@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
 
 const LoginPage: React.FC = () => {
     const { isAuthenticated, login } = useAuth();
@@ -21,31 +23,35 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="p-4 text-center">
-            <h1 className="text-2xl font-bold mb-4">Login Page</h1>
+        <Container className="p-4 text-center">
+            <Card>
+                <Card.Body>
+                    <h1 className="text-2xl font-bold mb-4">Login Page</h1>
 
-            <div className="mb-4">
-                <label htmlFor="role" className="block mb-2 font-semibold">
-                    Select Role:
-                </label>
-                <select
-                    id="role"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
-                    className="border px-3 py-2 rounded"
-                >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
+                    <div className="mb-4">
+                        <label htmlFor="role" className="block mb-2 font-semibold">
+                            Select Role:
+                        </label>
+                        <select
+                            id="role"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
+                            className="border px-3 py-2 rounded"
+                        >
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
 
-            <button
-                onClick={handleLogin}
-                className="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-600"
-            >
-                Login as {role}
-            </button>
-        </div>
+                    <button
+                        onClick={handleLogin}
+                        className="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-600"
+                    >
+                        Login as {role}
+                    </button>
+                </Card.Body>
+            </Card>
+        </Container>
     );
 };
 

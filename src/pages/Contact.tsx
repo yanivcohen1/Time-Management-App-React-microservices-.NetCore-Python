@@ -1,5 +1,7 @@
 import React from "react";
 import { useLocation, useParams } from "react-router-dom";
+import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
 
 const MyComponent: React.FC = () => {
     const location = useLocation();
@@ -10,11 +12,15 @@ const MyComponent: React.FC = () => {
 
     return (
         <>
-            <div className="p-4 text-center">
-                <h1>Contact</h1><br/>
-                <h3 className="text-xl font-bold">Query: ID={id} name={name}</h3><br/>
-                <h3 className="text-xl font-bold">Param: ID={aboutId.id}</h3>
-            </div>
+            <Container className="p-4 text-center">
+                <Card>
+                    <Card.Body>
+                        <h1>Contact</h1><br/>
+                        <h3 className="text-xl font-bold">Query: ID={id} name={name}</h3><br/>
+                        <h3 className="text-xl font-bold">Param: ID={aboutId.id}</h3>
+                    </Card.Body>
+                </Card>
+            </Container>
             
         </>
     );
