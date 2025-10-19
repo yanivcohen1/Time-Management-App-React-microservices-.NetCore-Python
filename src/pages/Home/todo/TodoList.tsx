@@ -14,6 +14,7 @@ import Row from "react-bootstrap/Row";
 import Stack from "react-bootstrap/Stack";
 import Alert from "react-bootstrap/Alert";
 import Modal from "react-bootstrap/Modal";
+import Nav from "react-bootstrap/Nav";
 import { useTheme } from "../../../hooks/useTheme";
 import "../../../animation/slide-right.css";
 import "../../../animation/fade.css";
@@ -22,6 +23,7 @@ import { faListCheck } from "@fortawesome/free-solid-svg-icons";
 interface Todo {
   id: string;
   text: string;
+  completed: boolean;
 }
 
 const TodoList: React.FC = () => {
@@ -37,7 +39,7 @@ const TodoList: React.FC = () => {
     try {
       const storedTodos = getData<Todo[]>('todos')// localStorage.getItem('todos');
       if (storedTodos) {
-          todos = storedTodos;
+          todos = storedTodos.map(todo => ({ ...todo, completed: todo.completed ?? false }));
       }
     } catch (error) {
       console.error('Error loading todos from localStorage:', error);
@@ -49,13 +51,22 @@ const TodoList: React.FC = () => {
   const [query, setQuery] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState<Todo | null>(null);
+  const [activeTab, setActiveTab] = useState<'all' | 'active' | 'complete'>('all');
 
   // Memoize filtered results for performance
   const filtered = useMemo(() => {
     const lower = query.toLowerCase();
-    if (!lower) return todos;
-    return todos.filter(item => item.text.toLowerCase().includes(lower));
-  }, [query, todos]);
+    let filteredTodos = todos;
+    if (lower) {
+      filteredTodos = filteredTodos.filter(item => item.text.toLowerCase().includes(lower));
+    }
+    if (activeTab === 'active') {
+      filteredTodos = filteredTodos.filter(item => !item.completed);
+    } else if (activeTab === 'complete') {
+      filteredTodos = filteredTodos.filter(item => item.completed);
+    }
+    return filteredTodos;
+  }, [query, todos, activeTab]);
 
   // Save todos to localStorage
   useEffect(() => {
@@ -86,7 +97,8 @@ const TodoList: React.FC = () => {
 
     const newTodo: Todo = {
       id: `todo_${Date.now()}`,
-      text: trimmed
+      text: trimmed,
+      completed: false
     };
 
     setTodos([...todos, newTodo]);
@@ -112,6 +124,14 @@ const TodoList: React.FC = () => {
     handleDelete(todoToDelete.id);
     handleCancelDelete();
   };
+
+  const handleToggleComplete = (id: string) => {
+    setTodos(prev => prev.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo));
+  };
+
+  const allCount = todos.length;
+  const activeCount = todos.filter(t => !t.completed).length;
+  const completeCount = todos.filter(t => t.completed).length;
 
   // Manage refs for each list item to avoid findDOMNode
   const nodeRefs = useRef<Record<string, React.RefObject<any>>>({});
@@ -185,11 +205,31 @@ const TodoList: React.FC = () => {
                   </InputGroup>
                 </Form.Group>
 
-                <ListGroup
-                  variant="flush"
-                  className={`border rounded ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}
+                <Nav
+                  variant="tabs"
+                  className="justify-content-center mb-3"
+                  activeKey={activeTab}
+                  onSelect={(k) => setActiveTab(k as 'all' | 'active' | 'complete')}
+                  data-bs-theme={isDarkTheme ? 'dark' : undefined}
                 >
-                  <TransitionGroup component={null}>
+                  <Nav.Item>
+                    <Nav.Link eventKey="all">All ({allCount})</Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey="active">Active ({activeCount})</Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey="complete">Complete ({completeCount})</Nav.Link>
+                  </Nav.Item>
+                </Nav>
+
+                <Card className={`shadow-sm ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}>
+                  <Card.Body>
+                    <ListGroup
+                      variant="flush"
+                      className={`border rounded ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}
+                    >
+                      <TransitionGroup component={null}>
                     {filtered.map(todo => {
                       let ref = nodeRefs.current[todo.id];
                       if (!ref) {
@@ -198,19 +238,27 @@ const TodoList: React.FC = () => {
                       }
 
                       return (
-                        <CSSTransition key={todo.id} nodeRef={ref} timeout={300} classNames="slide">
+                        <CSSTransition key={todo.id} nodeRef={ref} timeout={500} classNames="slide">
                           <ListGroup.Item
                             ref={ref}
                             className={`d-flex justify-content-between align-items-center py-3 ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}
                           >
-                            <span className="me-3 flex-grow-1">{todo.text}</span>
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => handleDeleteRequest(todo)}
-                            >
-                              Delete
-                            </Button>
+                            <span className={`me-3 flex-grow-1 ${todo.completed ? 'text-decoration-line-through text-muted' : ''}`} style={todo.completed ? {opacity: 0.6} : undefined}>{todo.text}</span>
+                            <div className="d-flex align-items-center gap-2">
+                              <Form.Check
+                                type="checkbox"
+                                checked={todo.completed}
+                                onChange={() => handleToggleComplete(todo.id)}
+                                label={<span style={{opacity: 0.6}}>Done</span>}
+                              />
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => handleDeleteRequest(todo)}
+                              >
+                                Delete
+                              </Button>
+                            </div>
                           </ListGroup.Item>
                         </CSSTransition>
                       );
@@ -222,6 +270,8 @@ const TodoList: React.FC = () => {
                     </ListGroup.Item>
                   )}
                 </ListGroup>
+                  </Card.Body>
+                </Card>
               </Stack>
               <Modal
                 show={showDeleteModal}
