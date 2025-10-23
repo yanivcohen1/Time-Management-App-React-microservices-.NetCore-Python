@@ -28,7 +28,7 @@ const App: React.FC = () => {
   const loadingRef = useRef<InstanceType<typeof LoadingBar>>(null!);
 
   useEffect(() => {
-    axios.defaults.baseURL = 'http://localhost:5001';
+    axios.defaults.baseURL = 'http://localhost:5000';
     // start on any request
     const reqId = axios.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
