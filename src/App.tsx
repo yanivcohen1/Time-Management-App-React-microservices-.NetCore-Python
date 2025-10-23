@@ -10,7 +10,7 @@ import About from './pages/About/About';
 import AboutMe from './pages/About/about-me/AboutMe';
 import { useAuth } from './auth/AuthContext';
 import { PrivateRoute } from './routes/PrivateRoute';
-import { ToastProvider } from './context/ToastContext';
+import { ToastProvider, useToast } from './context/ToastContext';
 import AdminPage from './pages/AdminPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
@@ -28,38 +28,6 @@ const NotFound = () => <h1>404 - Page Not Found</h1>;
 const App: React.FC = () => {
   const loadingRef = useRef<InstanceType<typeof LoadingBar>>(null!);
 
-  useEffect(() => {
-    axios.defaults.baseURL = 'http://localhost:5000';
-    // start on any request
-    const reqId = axios.interceptors.request.use(
-      (config: InternalAxiosRequestConfig) => {
-        loadingRef.current.continuousStart();
-        const token = getData<string>('jwt');
-        if (token) {
-          if (!config.headers) config.headers = {} as AxiosRequestHeaders;
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      }
-    );
-    // complete on response or error
-    const resId = axios.interceptors.response.use(
-      (res: AxiosResponse) => {
-        loadingRef.current.complete();
-        return res;
-      },
-      (err) => {
-        console.error('HTTP Error:', err);
-        loadingRef.current.complete();
-        return Promise.reject(err);
-      }
-    );
-    return () => {
-      axios.interceptors.request.eject(reqId);
-      axios.interceptors.response.eject(resId);
-    };
-  }, []);
-
   return (
     <ToastProvider>
       <Router>
@@ -75,6 +43,7 @@ interface InnerAppProps {
 // Separate component to use hooks like useLocation inside the router life cycle changes
 const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   const { isAuthenticated, role } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -151,6 +120,40 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
       }
     };
   }, [theme]);
+
+  useEffect(() => {
+    axios.defaults.baseURL = 'http://localhost:5000';
+    // start on any request
+    const reqId = axios.interceptors.request.use(
+      (config: InternalAxiosRequestConfig) => {
+        loadingRef.current.continuousStart();
+        const token = getData<string>('jwt');
+        if (token) {
+          if (!config.headers) config.headers = {} as AxiosRequestHeaders;
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      }
+    );
+    // complete on response or error
+    const resId = axios.interceptors.response.use(
+      (res: AxiosResponse) => {
+        loadingRef.current.complete();
+        return res;
+      },
+      (err) => {
+        console.error('HTTP Error:', err);
+        loadingRef.current.complete();
+        const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
+        showToast(errorMessage, 'danger');
+        return Promise.reject(err);
+      }
+    );
+    return () => {
+      axios.interceptors.request.eject(reqId);
+      axios.interceptors.response.eject(resId);
+    };
+  }, [loadingRef, showToast]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
