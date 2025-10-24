@@ -6830,6 +6830,7 @@
     "axios" "^1.12.0"
     "axios-mock-adapter" "^2.1.0"
     "bootstrap" "^5.3.8"
+    "js-yaml" "^4.1.0"
     "my-todo-app" "file:"
     "primeicons" "^7.0.0"
     "primereact" "^10.9.7"
