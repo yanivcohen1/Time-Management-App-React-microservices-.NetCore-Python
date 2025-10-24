@@ -12,6 +12,7 @@ A modern React application built with TypeScript, featuring a todo list, user au
 - **Data Persistence**: Local storage for todos and user data
 - **Loading Indicators**: Global loading bar for API requests
 - **Animations**: Smooth transitions with CSS animations
+- **Configurable Backend**: Backend URL loaded from YAML configuration file
 
 ## Project Structure
 
@@ -20,7 +21,7 @@ A modern React application built with TypeScript, featuring a todo list, user au
 - `src/context/`: App-wide state management
 - `src/utils/`: Utility functions and storage helpers
 - `src/hooks/`: Custom React hooks
-- `public/config.yaml`: Configuration file for server port
+- `public/config.yaml`: Configuration file for server port and backend URL
 
 ## Available Scripts
 
@@ -29,7 +30,7 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.\
-The server port is loaded from `public/config.yaml` (default: 3001).\
+The server port and backend URL are loaded from `public/config.yaml` (default port: 3001).\
 Open [http://localhost:3001](http://localhost:3001) to view it in the browser.
 
 The page will reload if you make edits.\
@@ -62,11 +63,16 @@ You don't have to ever use `eject`. The curated feature set is suitable for smal
 
 ## Configuration
 
-The server port can be configured in `public/config.yaml`:
+The app can be configured using `public/config.yaml`:
 
 ```yaml
 port: 3001
+backend:
+  url: http://localhost:5000
 ```
+
+- `port`: The port on which the React development server runs
+- `backend.url`: The base URL for API calls (loaded dynamically at runtime)
 
 ## Learn More
 
