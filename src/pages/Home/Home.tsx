@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import "../../animation/slide-right.css";
+import "../../animation/fade.css";
 import axios from 'axios';
 import { getGlobal, setGlobal } from "../../utils/storage"; // for data storage
 import { useTheme } from "../../hooks/useTheme";
@@ -10,7 +11,6 @@ import MyModal from '../../utils/Modal';
 import '../../utils/Modal.css';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import Collapse from 'react-bootstrap/Collapse';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -236,16 +236,18 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
                       </Button>
                     </Stack>
 
-                    <Collapse in={open}>
-                      <Card className={`border-0 ${isDarkTheme ? 'bg-dark text-white' : 'bg-light'}`} id="example-collapse-text">
-                        <Card.Body className={isDarkTheme ? 'text-white' : undefined}>
-                          <p className="mb-2">This is the content inside the div that can be collapsed.</p>
-                          <Button onClick={() => showToast('Toast message', 'dark', 'top-center')} className="mb-2">
-                            Toast
-                          </Button>
+                    <CSSTransition in={open} classNames="fade" timeout={300} unmountOnExit>
+                      <Card>
+                        <Card.Body>
+                          <div id="example-collapse-text">
+                            <p className="mb-2">This is the content inside the div that can be collapsed.</p>
+                            <Button onClick={() => showToast('Toast message', 'dark', 'top-center')} className="mb-2">
+                              Toast
+                            </Button>
+                          </div>
                         </Card.Body>
                       </Card>
-                    </Collapse>
+                    </CSSTransition>
 
                     <Stack direction="horizontal" gap={2} className="flex-wrap">
                       <Button variant="outline-primary" onClick={() => setShowStickySave(true)}>

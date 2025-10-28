@@ -1,17 +1,25 @@
 .fade-enter {
     opacity: 0;
+    max-height: 0;
+    overflow: hidden;
 }
 
 .fade-enter-active {
     opacity: 1;
-    transition: opacity 300ms ease-in;
+    max-height: 300px;
+    overflow: hidden;
+    transition: opacity 300ms ease-in-out, max-height 300ms ease-in-out;
 }
 
 .fade-exit {
     opacity: 1;
+    max-height: 300px;
+    overflow: hidden;
 }
 
 .fade-exit-active {
     opacity: 0;
-    transition: opacity 300ms ease-out;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 300ms ease-in-out, max-height 300ms ease-in-out;
 }
