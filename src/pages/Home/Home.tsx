@@ -70,6 +70,7 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
   };
   // Add sticky save message state and toast message state
   const [showStickySave, setShowStickySave] = useState(true);
+  const [stickyMsg, setStickyMsg] = useState(true);
   const [stickyPosition, setStickyPosition] = useState<'current' | 'top' | 'bottom'>('current');
   interface ApiResponse {
     message: string;
@@ -129,6 +130,7 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
   const handleSave = (confirm: boolean) => {
     showToast(confirm ? 'Saved successfully!' : 'Save cancelled', confirm ? 'success' : 'secondary', 'bottom-center');
     setShowStickySave(false);
+    setStickyMsg(confirm)
   };
 
   useEffect(() => {
@@ -259,8 +261,14 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
                           <Dropdown.Item onClick={() => setStickyPosition('bottom')}>Stick to Bottom</Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
+                      {!showStickySave && (
+                        <span className="p-2 mb-0" style={{ fontSize: '0.875rem' }}>
+                          Selection: {stickyMsg ? 'Save' : 'Dismiss'}
+                        </span>
+                    )}
                     </Stack>
 
+                    
                     <div className="d-flex align-items-center gap-2">
                       <Dropdown>
                         <Dropdown.Toggle variant="primary" id="dropdown-basic">
