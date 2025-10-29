@@ -36,6 +36,7 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
   const location = useLocation();
   const outletRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement | null>(null);
+  const expandRef = useRef<HTMLDivElement>(null);
   type MyData = { foo: string; };
   const { data, setData } = useAppContext<MyData>();
   const [open, setOpen] = useState(false);
@@ -236,8 +237,8 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
                       </Button>
                     </Stack>
 
-                    <CSSTransition in={open} classNames="fade" timeout={300} unmountOnExit>
-                      <Card>
+                    <CSSTransition in={open} classNames="fade" timeout={300} unmountOnExit nodeRef={expandRef}>
+                      <Card ref={expandRef}>
                         <Card.Body>
                           <div id="example-collapse-text">
                             <p className="mb-2">This is the content inside the div that can be collapsed.</p>
