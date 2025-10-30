@@ -15,6 +15,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Stack from 'react-bootstrap/Stack';
+import Collapse from 'react-bootstrap/Collapse';
 import { useToast } from "../../context/ToastContext";
 import Dropdown from 'react-bootstrap/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -237,18 +238,20 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
                       </Button>
                     </Stack>
 
-                    <CSSTransition in={open} classNames="fade" timeout={300} unmountOnExit nodeRef={expandRef}>
-                      <Card ref={expandRef}>
-                        <Card.Body>
-                          <div id="example-collapse-text">
-                            <p className="mb-2">This is the content inside the div that can be collapsed.</p>
-                            <Button onClick={() => showToast('Toast message', 'dark', 'top-center')} className="mb-2">
-                              Toast
-                            </Button>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </CSSTransition>
+                    <Collapse in={open}>
+                      <div>
+                        <Card ref={expandRef}>
+                          <Card.Body>
+                            <div id="example-collapse-text">
+                              <p className="mb-2">This is the content inside the div that can be collapsed.</p>
+                              <Button onClick={() => showToast('Toast message', 'dark', 'top-center')} className="mb-2">
+                                Toast
+                              </Button>
+                            </div>
+                          </Card.Body>
+                        </Card>
+                      </div>
+                    </Collapse>
 
                     <Stack direction="horizontal" gap={2} className="flex-wrap">
                       <Button variant="outline-primary" onClick={() => setShowStickySave(true)}>
