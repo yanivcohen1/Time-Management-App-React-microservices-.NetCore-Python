@@ -123,9 +123,15 @@ code {
  .side-nav a.active {
   background-color: gray;
 }
+.side-nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
 /* Active submenu link background - already indented */
 .side-nav__submenu-link.active {
   background-color: gray;
+}
+.side-nav__submenu-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 /* Side nav toggle for mobile */
 .menu-icon {
