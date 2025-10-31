@@ -280,6 +280,8 @@ const TodoList: React.FC = () => {
                 keyboard={false}
                 contentClassName={isDarkTheme ? 'bg-dark text-white border-secondary' : undefined}
                 data-bs-theme={isDarkTheme ? 'dark' : undefined}
+                backdropClassName="custom-backdrop"
+                style={{zIndex: 2000}}
               >
                 <Modal.Header closeButton closeVariant={isDarkTheme ? 'white' : undefined} className={isDarkTheme ? 'border-secondary' : undefined}>
                   <Modal.Title>Confirm delete</Modal.Title>
