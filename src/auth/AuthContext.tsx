@@ -5,6 +5,16 @@ import axios from 'axios';
 
 type UserRole = 'admin' | 'user' | 'guest';
 
+namespace Auth {
+    export type Data = {
+        isAuthenticated: boolean;
+        role: UserRole;
+    };
+    export const KEY = 'auth';
+}
+
+export const JWT_KEY = 'jwt';
+
 interface AuthContextType {
     isAuthenticated: boolean;
     role: UserRole;
@@ -23,11 +33,11 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-        const stored = getData<{ isAuthenticated: boolean; role: UserRole }>('auth');
+        const stored = getData<Auth.Data>(Auth.KEY);
         return stored ? stored.isAuthenticated : false;
     });
     const [role, setRole] = useState<UserRole>(() => {
-        const stored = getData<{ isAuthenticated: boolean; role: UserRole }>('auth');
+        const stored = getData<Auth.Data>(Auth.KEY);
         return stored ? stored.role : 'guest';
     });
 
@@ -36,13 +46,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const response = await axios.post('/api/auth/login', { username, password });
             const { access_token, role } = response.data;
             if (access_token) {
-                saveData('jwt', access_token);
+                saveData(JWT_KEY, access_token);
             }
             // Use role from response, normalized to lowercase
             const userRole: UserRole = role.toLowerCase() as UserRole;
             setIsAuthenticated(true);
             setRole(userRole);
-            saveData('auth', { isAuthenticated: true, role: userRole });
+            saveData(Auth.KEY, { isAuthenticated: true, role: userRole } as Auth.Data);
         } catch (error) {
             console.error('Login failed:', error);
             throw error;
@@ -52,8 +62,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = () => {
         setIsAuthenticated(false);
         setRole('guest');
-        saveData('auth', { isAuthenticated: false, role: 'guest' });
-        removeData('jwt');
+        saveData(Auth.KEY, { isAuthenticated: false, role: 'guest' } as Auth.Data);
+        removeData(JWT_KEY);
     };
 
     return (

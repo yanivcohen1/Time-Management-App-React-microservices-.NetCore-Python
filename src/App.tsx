@@ -9,7 +9,7 @@ import TodoList from "./pages/Home/todo/TodoList";
 import Contact from "./pages/Contact";
 import About from './pages/About/About';
 import AboutMe from './pages/About/about-me/AboutMe';
-import { useAuth } from './auth/AuthContext';
+import { useAuth, JWT_KEY } from './auth/AuthContext';
 import { PrivateRoute } from './routes/PrivateRoute';
 import { ToastProvider, useToast } from './context/ToastContext';
 import AdminPage from './pages/AdminPage';
@@ -146,7 +146,7 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
     const reqId = axios.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         loadingRef.current.continuousStart();
-        const token = getData<string>('jwt');
+        const token = getData<string>(JWT_KEY);
         if (token) {
           if (!config.headers) config.headers = {} as AxiosRequestHeaders;
           config.headers.Authorization = `Bearer ${token}`;
