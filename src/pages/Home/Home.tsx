@@ -84,6 +84,11 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
     { label: "🍊 Orange", value: "orange" },
     { label: "🍇 Grape", value: "grape" },
   ];
+  const [selectedMode, setSelectedMode] = useState<string>('normal');
+  const modes: Option[] = [
+    { label: "Mock", value: "normal" },
+    { label: "Admin", value: "admin" },
+  ];
   interface ApiResponse {
     message: string;
   }
@@ -135,6 +140,16 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
         errorMessage = e.message;
       }
       showToast(errorMessage, 'danger', 'top-center');
+    }
+  };
+
+  const handleGetReports = async () => {
+    try {
+      const response = await axios.get('/api/admin/reports');
+      showToast(`Reports: ${JSON.stringify(response.data)}`, 'success', 'top-end');
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+      //showToast('Failed to fetch reports', 'danger', 'top-end');
     }
   };
 
@@ -231,7 +246,14 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
 
                     <Stack direction="horizontal" gap={2} className="flex-wrap">
                       <Button variant="primary" onClick={() => setIsModalOpen(true)}>Open Custom Modal</Button>
-                      <Button variant="outline-secondary" onClick={fetchData}>Fetch Data</Button><br />
+                      <div style={{width: '100%'}} />
+                      <Button variant="outline-secondary" onClick={() => selectedMode === 'admin' ? handleGetReports() : fetchData()}>Fetch Data</Button>
+                      <CustomSelect
+                        options={modes}
+                        value={selectedMode}
+                        onChange={setSelectedMode}
+                      />
+                      <div style={{width: '100%'}} />
                       <Button
                         variant={isDarkTheme ? 'outline-light' : 'outline-dark'}
                         onClick={() => setOpen(!open)}
