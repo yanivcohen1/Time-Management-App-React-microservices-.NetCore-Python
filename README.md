@@ -1,6 +1,6 @@
 # React + TypeScript + Vite App
 
-A modern React application built with TypeScript, featuring a todo list, user authentication, role-based access control, and nested routing. The app uses Bootstrap for styling, PrimeReact components, and Axios for API calls.
+A modern React application built with TypeScript and Vite, featuring a todo list, user authentication, role-based access control, and nested routing. The app uses Bootstrap for styling, PrimeReact components, and Axios for API calls.
 
 ## Features
 
@@ -48,6 +48,14 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
+
+### `pnpm lint`
+
+Runs ESLint to check for code quality issues and potential errors in the codebase.
+
+### `pnpm preview`
+
+Serves the production build locally for testing and previewing the app before deployment.
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
