@@ -8,5 +8,5 @@
     ],
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
-    "python.defaultInterpreterPath": "${workspaceFolder}/backend_py_service/venv/Scripts/python.exe"
+    "python.defaultInterpreterPath": "${workspaceFolder}/backend_python_service/venv/Scripts/python.exe"
 }

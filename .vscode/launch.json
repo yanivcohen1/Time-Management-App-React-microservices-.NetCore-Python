@@ -48,7 +48,7 @@
                 "5000",
                 "--reload"
             ],
-            "cwd": "${workspaceFolder}/backend_py_service",
+            "cwd": "${workspaceFolder}/backend_python_service",
             "jinja": true,
             "console": "integratedTerminal"
         }
