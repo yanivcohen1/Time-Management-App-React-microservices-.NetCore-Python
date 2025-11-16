@@ -33,7 +33,7 @@
             "name": "C#: AuthApi Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/backend/AuthApi/AuthApi.csproj"
+            "projectPath": "${workspaceFolder}/backend_netCore_service/AuthApi/AuthApi.csproj"
         },
         {
             "name": "FastAPI: Uvicorn",
