@@ -1,6 +1,6 @@
 # Time Management App
 Frontend: React + TypeScript + BT5 + Vite 
 
-Backend: .NetCore + Mongodb + Xunit
+Backend1_service: .NetCore + Mongodb + Xunit
 
-Backend2: FastAPI + Mongodb + TestClient
+Backend2_service: FastAPI + Mongodb + TestClient
