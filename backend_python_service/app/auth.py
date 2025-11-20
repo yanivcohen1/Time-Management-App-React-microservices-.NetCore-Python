@@ -1,13 +1,26 @@
+import asyncio
+import sys
 from datetime import datetime, timedelta
 from typing import Annotated, Dict, Optional
+from urllib.parse import urlparse
+from types import coroutine as types_coroutine
 
+# Motor 2.x expects the legacy selector loop on Windows; enforce it before any loops start.
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+if not hasattr(asyncio, "coroutine"):
+    asyncio.coroutine = types_coroutine
+
+from beanie import Document, init_beanie
+from beanie.exceptions import CollectionWasNotInitialized
 from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from pymongo import MongoClient
 import yaml
 
 with open('config.yaml') as f:
@@ -31,9 +44,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-client = MongoClient(config['ConnectionStrings']['MongoConnection'])
-db = client.fast_api_auth
-users_collection = db.users
+mongo_client = None
+mongo_loop = None
 
 
 class Token(BaseModel):
@@ -58,19 +70,88 @@ class UserInDB(User):
     hashed_password: str
 
 
+class UserDocument(Document):
+    username: str
+    full_name: Optional[str] = None
+    disabled: Optional[bool] = False
+    role: str
+    hashed_password: str
+
+    class Settings:
+        name = "users"
+
+    def to_user_in_db(self) -> UserInDB:
+        return UserInDB(**self.model_dump())
+
+
+async def init_db(force: bool = False) -> None:
+    global mongo_client, mongo_loop
+    current_loop = asyncio.get_running_loop()
+
+    client_is_valid = (
+        mongo_client is not None
+        and mongo_loop is not None
+        and not mongo_loop.is_closed()
+        and mongo_loop is current_loop
+    )
+
+    if client_is_valid and not force:
+        return
+
+    if mongo_client is not None:
+        mongo_client.close()
+
+    mongo_client = AsyncIOMotorClient(
+        config['ConnectionStrings']['MongoConnection'],
+        io_loop=current_loop,
+    )
+    database = mongo_client.get_default_database()
+
+    if database is None:
+        parsed = urlparse(config['ConnectionStrings']['MongoConnection'])
+        db_name = parsed.path.lstrip("/") or "fast_api_auth"
+        database = mongo_client[db_name]
+
+    await init_beanie(database=database, document_models=[UserDocument])
+    mongo_loop = current_loop
+
+
+async def ensure_beanie_initialized() -> None:
+    await init_db()
+    try:
+        UserDocument.get_settings()
+    except CollectionWasNotInitialized:
+        await init_db(force=True)
+
+
+@app.on_event("startup")
+async def on_startup() -> None:
+    await init_db()
+
+
+@app.on_event("shutdown")
+async def on_shutdown() -> None:
+    global mongo_client, mongo_loop
+    if mongo_client is not None:
+        mongo_client.close()
+        mongo_client = None
+    mongo_loop = None
+
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_user(username: str) -> Optional[UserInDB]:
-    user_dict = users_collection.find_one({"username": username})
-    if user_dict:
-        return UserInDB(**user_dict)
+async def get_user(username: str) -> Optional[UserInDB]:
+    await ensure_beanie_initialized()
+    user_doc = await UserDocument.find_one({"username": username})
+    if user_doc:
+        return user_doc.to_user_in_db()
     return None
 
 
-def authenticate_user(username: str, password: str) -> Optional[UserInDB]:
-    user = get_user(username)
+async def authenticate_user(username: str, password: str) -> Optional[UserInDB]:
+    user = await get_user(username)
     if not user or not verify_password(password, user.hashed_password):
         return None
     return user
@@ -98,10 +179,10 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
         token_data = TokenData(username=username, role=role)
     except JWTError as exc:
         raise credentials_exception from exc
-    user = get_user(username=token_data.username)
-    if user is None:
+    user_in_db = await get_user(username=token_data.username)
+    if user_in_db is None:
         raise credentials_exception
-    return user
+    return User(**user_in_db.model_dump(exclude={"hashed_password"}))
 
 
 async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]) -> User:
@@ -121,7 +202,7 @@ class LoginRequest(BaseModel):
 
 @app.post("/api/auth/login", response_model=Token)
 async def login_for_access_token(request: LoginRequest) -> Token:
-    user = authenticate_user(request.username, request.password)
+    user = await authenticate_user(request.username, request.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

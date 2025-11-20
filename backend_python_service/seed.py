@@ -1,34 +1,33 @@
-from pymongo import MongoClient
-from passlib.context import CryptContext
+import asyncio
 
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+from app.auth import UserDocument, init_db, pwd_context
 
-def seed_users():
-    client = MongoClient("mongodb://localhost:27017/fast_api_auth")
-    db = client.fast_api_auth
-    users_collection = db.users
 
-    # Admin user
-    admin_user = {
-        "username": "admin@example.com",
-        "full_name": "Admin User",
-        "hashed_password": pwd_context.hash("Admin123!"),
-        "disabled": False,
-        "role": "admin",
-    }
-    users_collection.insert_one(admin_user)
+async def seed_users() -> None:
+    await init_db()
 
-    # User
-    user_user = {
-        "username": "user@example.com",
-        "full_name": "Regular User",
-        "hashed_password": pwd_context.hash("User123!"),
-        "disabled": False,
-        "role": "user",
-    }
-    users_collection.insert_one(user_user)
+    # Reset the collection for deterministic seed runs.
+    await UserDocument.find_all().delete()
 
+    admin_user = UserDocument(
+        username="admin@example.com",
+        full_name="Admin User",
+        hashed_password=pwd_context.hash("Admin123!"),
+        disabled=False,
+        role="admin",
+    )
+
+    regular_user = UserDocument(
+        username="user@example.com",
+        full_name="Regular User",
+        hashed_password=pwd_context.hash("User123!"),
+        disabled=False,
+        role="user",
+    )
+
+    await UserDocument.insert_many([admin_user, regular_user])
     print("Users seeded successfully")
 
+
 if __name__ == "__main__":
-    seed_users()
+    asyncio.run(seed_users())
