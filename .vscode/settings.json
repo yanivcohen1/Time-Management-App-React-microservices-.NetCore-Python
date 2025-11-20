@@ -12,5 +12,14 @@
     "python.testing.cwd": "${workspaceFolder}/backend_python_service",
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
-    "python.defaultInterpreterPath": "${workspaceFolder}/backend_python_service/venv/Scripts/python.exe"
+    "python.defaultInterpreterPath": "${workspaceFolder}/backend_python_service/venv/Scripts/python.exe",
+
+    "vitest.commandLine": "pnpm vitest",
+    "vitest.configPath": "${workspaceFolder}/frontend/vitest.config.ts",
+    "vitest.include": [
+        "frontend/src/**/*.test.{ts,tsx}",
+        "frontend/src/**/*.spec.{ts,tsx}"
+    ],
+    "vitest.workingDirectory": "${workspaceFolder}/frontend",
+    "jest.enable": false
 }
