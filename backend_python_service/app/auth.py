@@ -24,7 +24,7 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 import yaml
 
-config_file = os.environ.get('CONFIG_FILE', 'dev.config.yaml')
+config_file = os.environ.get('CONFIG_FILE', os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dev.config.yaml'))
 with open(config_file) as f:
     config = yaml.safe_load(f)
 
