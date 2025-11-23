@@ -153,19 +153,20 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   }, [themeMode]);
 
   useEffect(() => {
-    fetch('/config.yaml')
+    const configFile = process.env.NODE_ENV === 'production' ? '/config.prod.yaml' : '/config.dev.yaml';
+    fetch(configFile)
       .then(response => response.text())
       .then(yamlText => {
         const config = yaml.load(yamlText) as Config;
         if (config.backend && config.backend.url) {
           axios.defaults.baseURL = config.backend.url;
         } else {
-          console.warn('Backend URL not found in config.yaml, using default');
+          console.warn(`Backend URL not found in ${configFile}, using default`);
           axios.defaults.baseURL = 'http://localhost:5000';
         }
       })
       .catch(error => {
-        console.error('Failed to load config.yaml:', error);
+        console.error(`Failed to load ${configFile}:`, error);
         axios.defaults.baseURL = 'http://localhost:5000';
       });
   }, []);
