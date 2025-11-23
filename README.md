@@ -23,6 +23,7 @@ The solution consists of three main components:
     *   Responsive Sidebar Drawer (Desktop/Mobile layouts)
     *   Role-based Access Control (RBAC)
     *   Breadcrumb navigation
+*   Configuration: YAML-based settings
 
 ### Backend - .NET Core (`/backend_netCore_service`)
 *   **Framework**: ASP.NET Core 9.0 Web API
@@ -35,6 +36,7 @@ The solution consists of three main components:
 *   **Framework**: FastAPI
 *   **Database**: MongoDB (via Beanie ODM / Motor)
 *   **Authentication**: JWT
+*   Configuration: YAML-based settings
 *   **Testing**: Pytest + TestClient
 
 ## 📂 Project Structure
