@@ -112,12 +112,14 @@ app.MapPost("/api/auth/login", (LoginRequest request, IUserService userService, 
         : Results.Ok(tokenService.CreateToken(user));
 }).AllowAnonymous();
 
-app.MapGet("/api/admin/reports", [Authorize(Roles = "Admin")] (ClaimsPrincipal principal) =>
+app.MapGet("/api/admin/reports", [Authorize(Roles = "Admin")] (ClaimsPrincipal principal, IUserService userService) =>
 {
     var username = principal.Identity?.Name ?? "unknown";
+    var user = userService.GetUser(username);
     var payload = new
     {
         Owner = username,
+        Role = user?.Role,
         GeneratedAtUtc = DateTime.UtcNow,
         Items = new[] { "Quarterly financials", "Infrastructure status" }
     };
