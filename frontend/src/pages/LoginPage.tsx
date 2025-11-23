@@ -2,13 +2,17 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Alert from 'react-bootstrap/Alert';
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  Box,
+  Grid
+} from '@mui/material';
 
 const LoginPage: React.FC = () => {
     const { login } = useAuth();
@@ -48,63 +52,59 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <Container className="p-4 text-center">
+        <Container sx={{ p: 4, textAlign: 'center' }}>
             <Card>
-                <Card.Body>
-                    <h1 className="text-2xl font-bold mb-4">Login Page</h1>
+                <CardContent>
+                    <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold', mb: 4 }}>
+                        Login Page
+                    </Typography>
 
-                    {error && <Alert variant="danger">{error}</Alert>}
+                    {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-                    <Form>
-                        <Row className="mb-3">
-                            <Col>
-                                <Form.Group controlId="username">
-                                    <Form.Label>Username</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter username"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row className="mb-3">
-                            <Col>
-                                <Form.Group controlId="password">
-                                    <Form.Label>Password</Form.Label>
-                                    <Form.Control
-                                        type="password"
-                                        placeholder="Enter password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row className="mb-3">
-                            <Col>
-                                <Button
-                                    onClick={handleLogin}
-                                    disabled={loading}
-                                    className="w-100"
-                                >
-                                    {loading ? 'Logging in...' : 'Login'}
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Form>
+                    <Box component="form">
+                        <Box sx={{ mb: 3 }}>
+                            <TextField
+                                fullWidth
+                                id="username"
+                                label="Username"
+                                placeholder="Enter username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        </Box>
+                        <Box sx={{ mb: 3 }}>
+                            <TextField
+                                fullWidth
+                                id="password"
+                                label="Password"
+                                type="password"
+                                placeholder="Enter password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </Box>
+                        <Box sx={{ mb: 3 }}>
+                            <Button
+                                variant="contained"
+                                onClick={handleLogin}
+                                disabled={loading}
+                                fullWidth
+                            >
+                                {loading ? 'Logging in...' : 'Login'}
+                            </Button>
+                        </Box>
+                    </Box>
 
-                    <div className="mt-4">
-                        <p>Demo Credentials:</p>
-                        <Button variant="outline-primary" onClick={fillAdminCredentials} className="me-2">
+                    <Box sx={{ mt: 4 }}>
+                        <Typography variant="body1">Demo Credentials:</Typography>
+                        <Button variant="outlined" onClick={fillAdminCredentials} sx={{ mr: 2 }}>
                             Login as Admin
                         </Button>
-                        <Button variant="outline-secondary" onClick={fillUserCredentials}>
+                        <Button variant="outlined" onClick={fillUserCredentials}>
                             Login as User
                         </Button>
-                    </div>
-                </Card.Body>
+                    </Box>
+                </CardContent>
             </Card>
         </Container>
     );

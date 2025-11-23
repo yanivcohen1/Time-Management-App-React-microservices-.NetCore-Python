@@ -9,19 +9,25 @@ import { useTheme } from "../../hooks/useTheme";
 import { useAppContext } from "../../context/AppContext"; // for events updates
 import MyModal from '../../utils/Modal';
 import '../../utils/Modal.css';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Stack from 'react-bootstrap/Stack';
-import Collapse from 'react-bootstrap/Collapse';
+import {
+  Container,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  Grid,
+  Stack,
+  Collapse,
+  Box,
+  Alert,
+  Menu,
+  MenuItem,
+  Popover
+} from '@mui/material';
 import { useToast } from "../../context/ToastContext";
-import Dropdown from 'react-bootstrap/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUser, faList } from '@fortawesome/free-solid-svg-icons';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import CustomButton from '../../components/CustomButton';
 import CustomSelect from '../../components/CustomSelect';
 import type { Option } from '../../components/CustomSelect';
@@ -48,7 +54,6 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
   const isDarkTheme = theme === 'dark';
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [overlaySelection, setOverlaySelection] = useState<string>('');
-  const [showOverlay, setShowOverlay] = useState(false);
   const { showToast } = useToast();
   const stickySaveWrapperStyle: React.CSSProperties = {
     position: 'sticky',
@@ -78,6 +83,36 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
   const [stickyMsg, setStickyMsg] = useState(true);
   const [stickyPosition, setStickyPosition] = useState<'current' | 'top' | 'bottom'>('current');
   const [selectedFruit, setSelectedFruit] = useState<string>("apple");
+
+  // State for MUI Menu (Sticky Position)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // State for MUI Menu (Select Option)
+  const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(null);
+  const openOptionMenu = Boolean(optionAnchorEl);
+  const handleOptionMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setOptionAnchorEl(event.currentTarget);
+  };
+  const handleOptionMenuClose = () => {
+    setOptionAnchorEl(null);
+  };
+
+  // State for MUI Popover
+  const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const handlePopoverClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setPopoverAnchorEl(event.currentTarget);
+  };
+  const handlePopoverClose = () => {
+    setPopoverAnchorEl(null);
+  };
+  const openPopover = Boolean(popoverAnchorEl);
 
   const fruits: Option[] = [
     { label: "🍎 Apple", value: "apple" },
@@ -164,16 +199,26 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
   const renderStickySave = (position: 'top' | 'bottom') => {
     const style = position === 'top' ? fixedTopStyle : fixedBottomStyle;
     return (
-      <div
-        className="alert alert-primary mb-0 d-flex justify-content-between align-items-center gap-3 shadow-sm py-2 px-3"
-        style={style}
+      <Alert
+        severity="info"
+        sx={{
+          ...style,
+          boxShadow: 1,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          py: 1,
+          px: 2
+        }}
+        action={
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button size="small" variant="contained" onClick={() => handleSave(true)}>Yes</Button>
+            <Button size="small" variant="outlined" onClick={() => handleSave(false)}>No</Button>
+          </Box>
+        }
       >
-        <span className="fw-semibold">Save changes?</span>
-        <div className="d-flex gap-2">
-          <Button size="sm" variant="primary" onClick={() => handleSave(true)}>Yes</Button>
-          <Button size="sm" variant="secondary" onClick={() => handleSave(false)}>No</Button>
-        </div>
-      </div>
+        <Typography variant="subtitle2" component="span" sx={{ fontWeight: 'bold' }}>Save changes?</Typography>
+      </Alert>
     );
   };
 
@@ -185,78 +230,93 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
   return (
     <>
       {showStickySave && stickyPosition === 'current' && (
-        <Container fluid="lg" className="my-2 d-flex justify-content-center" style={stickySaveWrapperStyle}>
-          <div
-            className="alert alert-primary mb-0 d-flex justify-content-between align-items-center gap-3 shadow-sm py-2 px-3"
-            style={{ width: 'fit-content', maxWidth: '100%', padding: '0.5rem 0.75rem' }}
+        <Container maxWidth="lg" sx={{ my: 2, display: 'flex', justifyContent: 'center', ...stickySaveWrapperStyle }}>
+          <Alert
+            severity="info"
+            sx={{
+              width: 'fit-content',
+              maxWidth: '100%',
+              py: 1,
+              px: 2,
+              boxShadow: 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2
+            }}
+            action={
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button size="small" variant="contained" onClick={() => handleSave(true)}>Yes</Button>
+                <Button size="small" variant="outlined" onClick={() => handleSave(false)}>No</Button>
+              </Box>
+            }
           >
-            <span className="fw-semibold">Save changes?</span>
-            <div className="d-flex gap-2">
-              <Button size="sm" variant="primary" onClick={() => handleSave(true)}>Yes</Button>
-              <Button size="sm" variant="secondary" onClick={() => handleSave(false)}>No</Button>
-            </div>
-          </div>
+            <Typography variant="subtitle2" component="span" sx={{ fontWeight: 'bold' }}>Save changes?</Typography>
+          </Alert>
         </Container>
       )}
       {showStickySave && stickyPosition === 'top' && renderStickySave('top')}
       {showStickySave && stickyPosition === 'bottom' && renderStickySave('bottom')}
 
-      <Container
-        fluid="lg"
-        className="py-4"
-      >
-        <Row className="g-4">
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Grid container spacing={4} justifyContent="center">
           {isVisible && (
-            <Col xs={12} md={8} lg={6} className="mx-auto">
-              <Card className={`shadow-sm ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}>
-                <Card.Header className={`text-center ${isDarkTheme ? 'bg-dark text-white border-secondary' : 'bg-white'}`}>
-                  <h2 className="mb-0"><FontAwesomeIcon icon={faHome} className="me-2" />Home Page</h2>
-                </Card.Header>
-                <Card.Body className={isDarkTheme ? 'bg-dark text-white' : undefined}>
+            <Grid size={{ xs: 12, md: 8, lg: 6 }}>
+              <Card sx={{ boxShadow: 1 }}>
+                <CardHeader
+                  title={
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                      <FontAwesomeIcon icon={faHome} />
+                      <Typography variant="h5" component="span">Home Page</Typography>
+                    </Box>
+                  }
+                  sx={{ textAlign: 'center', bgcolor: isDarkTheme ? 'grey.900' : 'background.paper', color: isDarkTheme ? 'common.white' : 'text.primary' }}
+                />
+                <CardContent>
                   <Stack gap={3}>
                     <div ref={inputRef}>
-                      <h6 className="text-muted mb-2">App Context: {user ?? 'No user logged in'}</h6>
-                      <Card className={`border-0 ${isDarkTheme ? 'bg-dark text-white' : 'bg-light'}`}>
-                        <Card.Body className={`d-flex justify-content-between align-items-center ${isDarkTheme ? 'text-white' : ''}`}>
+                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>App Context: {user ?? 'No user logged in'}</Typography>
+                      <Card variant="outlined" sx={{ bgcolor: isDarkTheme ? 'grey.900' : 'grey.50' }}>
+                        <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', '&:last-child': { pb: 2 } }}>
                           
-                          <Button variant="outline-primary" size="sm" onClick={updateI}>
-                            <FontAwesomeIcon icon={faUser} className="me-2" />Set AppContext User to Alice
+                          <Button variant="outlined" color="primary" size="small" onClick={updateI} startIcon={<FontAwesomeIcon icon={faUser} />}>
+                            Set AppContext User to Alice
                           </Button>
-                        </Card.Body>
+                        </CardContent>
                       </Card>
                     </div>
 
                     <div>
-                      <h6 className="text-muted mb-2">Global Storage: {global ?? 'No user logged in'}</h6>
-                      <Card className={`border-0 ${isDarkTheme ? 'bg-dark text-white' : 'bg-light'}`}>
-                        <Card.Body className={`d-flex justify-content-between align-items-center ${isDarkTheme ? 'text-white' : ''}`}>
-                          <Button variant="outline-success" size="sm" onClick={() => setGlobalstate('global Alice')}>
-                            <FontAwesomeIcon icon={faList} className="me-2" />Set global User to Alice
+                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>Global Storage: {global ?? 'No user logged in'}</Typography>
+                      <Card variant="outlined" sx={{ bgcolor: isDarkTheme ? 'grey.900' : 'grey.50' }}>
+                        <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', '&:last-child': { pb: 2 } }}>
+                          <Button variant="outlined" color="success" size="small" onClick={() => setGlobalstate('global Alice')} startIcon={<FontAwesomeIcon icon={faList} />}>
+                            Set global User to Alice
                           </Button>
-                        </Card.Body>
+                        </CardContent>
                       </Card>
                     </div>
 
                     <div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <Button variant="info" size="sm" onClick={onToggleCookieBanner}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Button variant="contained" color="info" size="small" onClick={onToggleCookieBanner}>
                           {isCookieBannerVisible ? 'Hide' : 'Show'} Cookie Banner
                         </Button>
-                      </div>
+                      </Box>
                     </div>
 
-                    <Stack direction="horizontal" gap={2} className="flex-wrap">
-                      <Button variant="primary" onClick={() => setIsModalOpen(true)}>Open Custom Modal</Button>
-                      <div style={{width: '100%'}} />
-                      <Button variant="outline-secondary" onClick={() => selectedMode === 'admin' ? handleGetReports() : fetchData()}>Fetch Data</Button>
+                    <Stack direction="row" gap={2} flexWrap="wrap">
+                      <Button variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>Open Custom Modal</Button>
+                      <Box sx={{ width: '100%' }} />
+                      <Button variant="outlined" color="secondary" onClick={() => selectedMode === 'admin' ? handleGetReports() : fetchData()}>Fetch Data</Button>
                       <CustomSelect
                         options={modes}
                         value={selectedMode}
                         onChange={setSelectedMode}
                       />
-                      <div style={{width: '100%'}} />
+                      <Box sx={{ width: '100%' }} />
                       <Button
-                        variant={isDarkTheme ? 'outline-light' : 'outline-dark'}
+                        variant={isDarkTheme ? 'outlined' : 'outlined'}
+                        color={isDarkTheme ? 'inherit' : 'primary'}
                         onClick={() => setOpen(!open)}
                         aria-controls="example-collapse-text"
                         aria-expanded={open}
@@ -267,86 +327,110 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
 
                     <Collapse in={open}>
                       <div>
-                        <Card ref={expandRef}>
-                          <Card.Body>
+                        <Card ref={expandRef} variant="outlined">
+                          <CardContent>
                             <div id="example-collapse-text">
-                              <p className="mb-2">This is the content inside the div that can be collapsed.</p>
-                              <Button onClick={() => showToast('Toast message', 'dark', 'top-center')} className="mb-2">
+                              <Typography paragraph>This is the content inside the div that can be collapsed.</Typography>
+                              <Button onClick={() => showToast('Toast message', 'dark', 'top-center')} sx={{ mb: 2 }}>
                                 Toast
                               </Button>
                             </div>
-                          </Card.Body>
+                          </CardContent>
                         </Card>
                       </div>
                     </Collapse>
 
-                    <Stack direction="horizontal" gap={2} className="flex-wrap">
-                      <Button variant="outline-primary" onClick={() => setShowStickySave(true)}>
+                    <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
+                      <Button variant="outlined" onClick={() => setShowStickySave(true)}>
                         Show Sticky Message
                       </Button>
-                      <Dropdown>
-                        <Dropdown.Toggle variant="outline-secondary" id="sticky-position-dropdown">
+                      
+                      <Box>
+                        <Button 
+                          variant="outlined" 
+                          color="secondary" 
+                          onClick={handleMenuClick}
+                          endIcon={<span style={{ fontSize: '0.7em' }}>▼</span>}
+                        >
                           Position: {stickyPosition}
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item onClick={() => setStickyPosition('current')}>Current</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setStickyPosition('top')}>Stick to Top</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setStickyPosition('bottom')}>Stick to Bottom</Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
+                        </Button>
+                        <Menu
+                          anchorEl={anchorEl}
+                          open={openMenu}
+                          onClose={handleMenuClose}
+                        >
+                          <MenuItem onClick={() => { setStickyPosition('current'); handleMenuClose(); }}>Current</MenuItem>
+                          <MenuItem onClick={() => { setStickyPosition('top'); handleMenuClose(); }}>Stick to Top</MenuItem>
+                          <MenuItem onClick={() => { setStickyPosition('bottom'); handleMenuClose(); }}>Stick to Bottom</MenuItem>
+                        </Menu>
+                      </Box>
+
                       {!showStickySave && (
-                        <span className="p-2 mb-0" style={{ fontSize: '0.875rem' }}>
+                        <Typography variant="body2" sx={{ p: 1 }}>
                           Selection: {stickyMsg ? 'Save' : 'Dismiss'}
-                        </span>
+                        </Typography>
                     )}
                     </Stack>
 
                     
-                    <div className="d-flex align-items-center gap-2">
-                      <Dropdown>
-                        <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Box>
+                        <Button 
+                          variant="contained" 
+                          color="primary" 
+                          onClick={handleOptionMenuClick}
+                          endIcon={<span style={{ fontSize: '0.7em' }}>▼</span>}
+                        >
                           Select Option
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item onClick={() => setSelectedOption('save')}>Save</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setSelectedOption('nosave')}>No Save</Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                      {selectedOption && <span>Selected: {selectedOption}</span>}
-                    </div>
+                        </Button>
+                        <Menu
+                          anchorEl={optionAnchorEl}
+                          open={openOptionMenu}
+                          onClose={handleOptionMenuClose}
+                        >
+                          <MenuItem onClick={() => { setSelectedOption('save'); handleOptionMenuClose(); }}>Save</MenuItem>
+                          <MenuItem onClick={() => { setSelectedOption('nosave'); handleOptionMenuClose(); }}>No Save</MenuItem>
+                        </Menu>
+                      </Box>
+                      {selectedOption && <Typography variant="body2">Selected: {selectedOption}</Typography>}
+                    </Box>
 
-                    <div className="d-flex align-items-center gap-2">
-                      <OverlayTrigger
-                        show={showOverlay}
-                        onToggle={setShowOverlay}
-                        trigger="click"
-                        placement="top"
-                        overlay={
-                          <Popover>
-                            <Popover.Body>
-                              <p>Save changes?</p>
-                              <div className="d-flex gap-2">
-                                <Button size="sm" variant="primary" onClick={() => {setOverlaySelection('Yes'); setShowOverlay(false);}}>Yes</Button>
-                                <Button size="sm" variant="secondary" onClick={() => {setOverlaySelection('No'); setShowOverlay(false);}}>No</Button>
-                              </div>
-                            </Popover.Body>
-                          </Popover>
-                        }
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Button variant="outlined" color="warning" onClick={handlePopoverClick}>Show Save Overlay</Button>
+                      <Popover
+                        open={openPopover}
+                        anchorEl={popoverAnchorEl}
+                        onClose={handlePopoverClose}
+                        anchorOrigin={{
+                          vertical: 'top',
+                          horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'center',
+                        }}
                       >
-                        <Button variant="outline-warning">Show Save Overlay</Button>
-                      </OverlayTrigger>
+                        <Box sx={{ p: 2 }}>
+                          <Typography gutterBottom>Save changes?</Typography>
+                          <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Button size="small" variant="contained" onClick={() => {setOverlaySelection('Yes'); handlePopoverClose();}}>Yes</Button>
+                            <Button size="small" variant="outlined" onClick={() => {setOverlaySelection('No'); handlePopoverClose();}}>No</Button>
+                          </Box>
+                        </Box>
+                      </Popover>
+                      
                       {overlaySelection && (
-                        <span className="p-2 mb-0" style={{ fontSize: '0.875rem' }}>
+                        <Typography variant="body2" sx={{ p: 1 }}>
                           Selection: {overlaySelection}
-                        </span>
+                        </Typography>
                       )}
-                    </div>
+                    </Box>
                     <CustomButton
                       variant="danger"
                       onClick={updateI}
                       label='My costum botton'
                     />
-                    <div className="d-flex flex-column align-items-center justify-content-center gap-3 p-4">
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, p: 4 }}>
 
                       <CustomSelect
                         label="My costom select fruit"
@@ -355,48 +439,38 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
                         onChange={setSelectedFruit}
                       />
 
-                      <p className="text-lg mt-4">
-                        You selected: <span className="font-semibold">{selectedFruit}</span>
-                      </p>
-                    </div>
+                      <Typography variant="h6" sx={{ mt: 4 }}>
+                        You selected: <Box component="span" sx={{ fontWeight: 'bold' }}>{selectedFruit}</Box>
+                      </Typography>
+                    </Box>
                   </Stack>
-                </Card.Body>
+                </CardContent>
               </Card>
-            </Col>
+            </Grid>
           )}
-        </Row>
-
-        <MyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <h2 className="mb-3">Welcome to the Modal!</h2>
-          <p>This is some flexible content for the modal body.</p>
-          <ul className="mb-0">
-            <li>You can put anything here</li>
-            <li>Forms, lists, images, and more</li>
-            <li className="mt-2">
-              <span className="me-2">User: {user ?? 'No user logged in'}</span>
-              <Button size="sm" onClick={updateI}>Set AppContext User to Alice</Button>
-            </li>
-          </ul>
-        </MyModal>
-
-        <TransitionGroup>
-          <CSSTransition
-            key={location.key}
-            nodeRef={outletRef}
-            classNames="slide"
-            timeout={300}
-            exit={false}
-            appear
-            mountOnEnter
-            unmountOnExit
-          >
-            <div ref={outletRef}>
-              <Outlet />
-            </div>
-          </CSSTransition>
-        </TransitionGroup>
-
+          
+          <Grid size={{ xs: 12 }}>
+            <TransitionGroup component={null}>
+              <CSSTransition
+                key={location.key}
+                classNames="fade"
+                timeout={300}
+                nodeRef={outletRef}
+              >
+                <div ref={outletRef}>
+                  <Outlet />
+                </div>
+              </CSSTransition>
+            </TransitionGroup>
+          </Grid>
+        </Grid>
       </Container>
+
+      <MyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h3>Custom Modal Content</h3>
+        <p>This is a custom modal.</p>
+        <Button variant="contained" color="secondary" onClick={() => setIsModalOpen(false)}>Close</Button>
+      </MyModal>
     </>
   );
 };

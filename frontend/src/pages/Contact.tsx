@@ -1,7 +1,6 @@
 import React from "react";
 import { useLocation, useParams } from "react-router-dom";
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
+import { Container, Card, CardContent, Typography } from '@mui/material';
 
 const MyComponent: React.FC = () => {
     const location = useLocation();
@@ -11,18 +10,15 @@ const MyComponent: React.FC = () => {
     const name = queryParams.get("name");
 
     return (
-        <>
-            <Container className="p-4 text-center">
-                <Card>
-                    <Card.Body>
-                        <h1>Contact</h1><br/>
-                        <h3 className="text-xl font-bold">Query: ID={id} name={name}</h3><br/>
-                        <h3 className="text-xl font-bold">Param: ID={aboutId.id}</h3>
-                    </Card.Body>
-                </Card>
-            </Container>
-            
-        </>
+        <Container sx={{ p: 4, textAlign: 'center' }}>
+            <Card>
+                <CardContent>
+                    <Typography variant="h4" component="h1" gutterBottom>Contact</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Query: ID={id} name={name}</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Param: ID={aboutId.id}</Typography>
+                </CardContent>
+            </Card>
+        </Container>
     );
 };
 

@@ -1,12 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Alert from 'react-bootstrap/Alert';
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  Box,
+  Grid
+} from '@mui/material';
 import { getlocalStorage, savelocalStorage } from '../utils/storage';
 import { useTheme } from '../hooks/useTheme';
 import './RegistrationPage.css';
@@ -204,83 +208,91 @@ const RegistrationPage: React.FC = () => {
   return (
     <div className={`registration-page ${theme === 'dark' ? 'dark' : ''}`} data-bs-theme={theme}>
       <Container>
-        <Row className="justify-content-center">
-          <Col xs={12} md={10} lg={8} xl={6}>
+        <Grid container justifyContent="center">
+          <Grid size={{ xs: 12, md: 10, lg: 8, xl: 6 }}>
             <Card className="registration-card mx-auto">
-              <Card.Body>
-                <h1 className="registration-title">Registration</h1>
-                <Form className="registration-form" onSubmit={handleSubmit} noValidate>
+              <CardContent>
+                <Typography variant="h4" component="h1" className="registration-title" gutterBottom>
+                  Registration
+                </Typography>
+                <Box component="form" className="registration-form" onSubmit={handleSubmit} noValidate>
                   {status && (
-                    <Alert variant={status.variant} className="mb-4">
+                    <Alert severity={status.variant === 'danger' ? 'error' : status.variant} className="mb-4">
                       {status.message}
                       {status.variant === 'success' && (
-                        <div className="mt-2">
-                          <Button variant="outline-light" size="sm" onClick={() => navigate('/login')}>
+                        <Box sx={{ mt: 2 }}>
+                          <Button variant="outlined" size="small" onClick={() => navigate('/login')}>
                             Go to Login
                           </Button>
-                        </div>
+                        </Box>
                       )}
                     </Alert>
                   )}
 
-                  <Form.Group className="mb-3" controlId="registerUsername">
-                    <Form.Label>User name</Form.Label>
-                    <Form.Control
-                      type="text"
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="registerUsername"
+                      label="User name"
                       name="username"
                       placeholder="Your username"
                       value={formData.username}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      isInvalid={Boolean(errors.username)}
+                      error={Boolean(errors.username)}
+                      helperText={errors.username}
                       className="registration-input"
                     />
-                    <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
-                  </Form.Group>
+                  </Box>
 
-                  <Form.Group className="mb-3" controlId="registerGroupName">
-                    <Form.Label>Group name</Form.Label>
-                    <Form.Control
-                      type="text"
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="registerGroupName"
+                      label="Group name"
                       name="groupName"
                       placeholder="Your group name"
                       value={formData.groupName}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      isInvalid={Boolean(errors.groupName)}
+                      error={Boolean(errors.groupName)}
+                      helperText={errors.groupName}
                       className="registration-input"
                     />
-                    <Form.Control.Feedback type="invalid">{errors.groupName}</Form.Control.Feedback>
-                  </Form.Group>
+                  </Box>
 
-                  <Form.Group className="mb-3" controlId="registerEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="registerEmail"
+                      label="Email"
                       type="email"
                       name="email"
                       placeholder="Your email"
                       value={formData.email}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      isInvalid={Boolean(errors.email)}
+                      error={Boolean(errors.email)}
+                      helperText={errors.email}
                       className="registration-input"
                     />
-                    <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
-                  </Form.Group>
+                  </Box>
 
-                  <Form.Group className="mb-3" controlId="registerPassword">
-                    <Form.Label>New password</Form.Label>
-                    <Form.Control
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="registerPassword"
+                      label="New password"
                       type="password"
                       name="password"
                       placeholder="New password"
                       value={formData.password}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      isInvalid={Boolean(errors.password)}
+                      error={Boolean(errors.password)}
+                      helperText={errors.password}
                       className="registration-input"
                     />
-                    <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                     <div className="strength-meter" role="status" aria-live="polite">
                       <span className="strength-label">Password strength:</span>
                       {renderStrengthBars()}
@@ -288,38 +300,41 @@ const RegistrationPage: React.FC = () => {
                         {formData.password ? strengthLabel : strengthLabels[0]}
                       </span>
                     </div>
-                  </Form.Group>
+                  </Box>
 
-                  <Form.Group className="mb-4" controlId="registerConfirmPassword">
-                    <Form.Label>New password confirmation</Form.Label>
-                    <Form.Control
+                  <Box sx={{ mb: 4 }}>
+                    <TextField
+                      fullWidth
+                      id="registerConfirmPassword"
+                      label="New password confirmation"
                       type="password"
                       name="confirmPassword"
                       placeholder="Confirm the new password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      isInvalid={Boolean(errors.confirmPassword)}
+                      error={Boolean(errors.confirmPassword)}
+                      helperText={errors.confirmPassword}
                       className="registration-input"
                     />
-                    <Form.Control.Feedback type="invalid">{errors.confirmPassword}</Form.Control.Feedback>
-                  </Form.Group>
+                  </Box>
 
-                  <div className="d-grid">
+                  <Box sx={{ display: 'grid' }}>
                     <Button
                       type="submit"
-                      variant="primary"
+                      variant="contained"
+                      color="primary"
                       className="registration-submit"
                       disabled={isSubmitDisabled}
                     >
                       Register
                     </Button>
-                  </div>
-                </Form>
-              </Card.Body>
+                  </Box>
+                </Box>
+              </CardContent>
             </Card>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </Container>
     </div>
   );

@@ -1,9 +1,6 @@
 import React from "react";
-import { Link, useParams, Outlet } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import Stack from "react-bootstrap/Stack";
-import Container from "react-bootstrap/Container";
-import Card from "react-bootstrap/Card";
+import { Link as RouterLink, useParams, Outlet } from "react-router-dom";
+import { Container, Card, CardContent, Stack, FormControlLabel, Switch, Typography, Link } from '@mui/material';
 import { AboutSwitchProvider, useAboutSwitch } from "./AboutSwitchContext";
 
 const AboutContent: React.FC = () => {
@@ -15,23 +12,20 @@ const AboutContent: React.FC = () => {
     };
 
     return (
-        <Container className="p-4 text-center">
+        <Container sx={{ p: 4, textAlign: 'center' }}>
             <Card>
-                <Card.Body>
-                    <h1>About</h1>
-                    <Stack gap={3} className="align-items-center">
-                        <Link to="about-me/2">About me</Link>
-                        <Form.Check
-                            type="switch"
-                            id="about-shared-switch"
+                <CardContent>
+                    <Typography variant="h4" component="h1" gutterBottom>About</Typography>
+                    <Stack spacing={3} alignItems="center">
+                        <Link component={RouterLink} to="/about/1/about-me/3?id=1&name=yan" color="primary" underline="hover">About me</Link>
+                        <FormControlLabel
+                            control={<Switch checked={isOn} onChange={handleToggle} />}
                             label={isOn ? "Switch On" : "Switch Off"}
-                            checked={isOn}
-                            onChange={handleToggle}
                         />
                     </Stack>
-                    <h4 className="text-xl font-bold">About: User ID: {aboutId}</h4>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mt: 2 }}>About: User ID: {aboutId}</Typography>
                     <Outlet />
-                </Card.Body>
+                </CardContent>
             </Card>
         </Container>
     );

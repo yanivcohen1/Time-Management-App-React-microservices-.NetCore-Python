@@ -3,7 +3,6 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import "primeicons/primeicons.css";
 import aura from '@primeuix/themes/aura';
 import { useTheme as applyPrimeTheme } from '@primeuix/themes';

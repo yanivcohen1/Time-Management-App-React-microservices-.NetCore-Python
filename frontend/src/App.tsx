@@ -19,6 +19,38 @@ import LoginPage from './pages/LoginPage';
 import Unauthorized from './pages/Unauthorized';
 import Logout from './pages/Logout';
 import RegistrationPage from './pages/RegistrationPage';
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { PrimeReactProvider } from 'primereact/api';
+import Lara from "@primeuix/themes/lara";
+
+const PRIME_THEME_CONFIG = {
+  preset: Lara,
+  options: {
+    prefix: "p",
+    darkModeSelector: "[data-theme='dark']",
+    cssLayer: true,
+  },
+};
+
+import {
+  Collapse,
+  Box,
+  Typography,
+  Button,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
+  IconButton,
+  Drawer,
+  Paper
+} from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight, faHome, faSignInAlt, faSignOutAlt, faUser, faUsers, faEnvelope, faInfoCircle, faMoon, faSun, faIdBadge, faTasks, faUserPlus, faBars } from '@fortawesome/free-solid-svg-icons';
 
 interface Config {
   port: number;
@@ -26,22 +58,20 @@ interface Config {
     url: string;
   };
 }
-import Collapse from 'react-bootstrap/Collapse';
-import Container from 'react-bootstrap/Container';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight, faHome, faSignInAlt, faSignOutAlt, faUser, faUsers, faEnvelope, faInfoCircle, faMoon, faSun, faIdBadge, faTasks, faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import { BreadCrumb } from 'primereact/breadcrumb';
 
-const NotFound = () => <h1>404 - Page Not Found</h1>;
+const NotFound = () => <Typography variant="h3" sx={{ p: 4 }}>404 - Page Not Found</Typography>;
 
 const App: React.FC = () => {
   const loadingRef = useRef<InstanceType<typeof LoadingBar>>(null!);
 
   return (
     <ToastProvider>
-      <Router>
-        <InnerApp loadingRef={loadingRef} />
-      </Router>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <PrimeReactProvider value={PRIME_THEME_CONFIG as any}>
+        <Router>
+          <InnerApp loadingRef={loadingRef} />
+        </Router>
+      </PrimeReactProvider>
     </ToastProvider>
   );
 };
@@ -49,53 +79,56 @@ const App: React.FC = () => {
 interface InnerAppProps {
   loadingRef: React.RefObject<InstanceType<typeof LoadingBar>>;
 }
-// Separate component to use hooks like useLocation inside the router life cycle changes
+
 const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   const { isAuthenticated, role } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // For mobile drawer
   const [aboutOpen, setAboutOpen] = useState(false);
   const [showCookieBanner, setShowCookieBanner] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() => {
     const storedTheme = getlocalStorage<string>('theme');
     return storedTheme === 'dark' ? 'dark' : 'light';
   });
   const location = useLocation();
-  const navRef = useRef<HTMLElement>(null!);
-  const isDarkTheme = theme === 'dark';
+  const isDarkTheme = themeMode === 'dark';
 
-  // close side menu when clicking outside
-  useEffect(() => {
-    if (!menuOpen) return
-
-    function handleClickOutside(event: MouseEvent) {
-      if (menuOpen && navRef.current && !navRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    // In each toggle of menuOpen or on unmount, React will call removeEventListener
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [menuOpen]);
-
-  useEffect(() => {
-    const body = document.body;
-    if (!body) {
-      return;
-    }
-    if (menuOpen) {
-      body.classList.add('side-nav-open');
-    } else {
-      body.classList.remove('side-nav-open');
-    }
-    return () => body.classList.remove('side-nav-open');
-  }, [menuOpen]);
-
-  // Sync submenu open state with URL
-  useEffect(() => {
-    setAboutOpen(location.pathname.startsWith('/about'));
-  }, [location.pathname]);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: themeMode,
+        },
+        components: {
+          MuiListItemButton: {
+            styleOverrides: {
+              root: {
+                '&.active': {
+                  color: themeMode === 'dark' ? '#ffffff' : 'inherit',
+                  '& .MuiListItemIcon-root': {
+                    color: themeMode === 'dark' ? '#ffffff' : 'inherit',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: themeMode === 'dark' ? '#ffffff' : 'inherit',
+                  },
+                },
+                '&:hover': {
+                  backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                },
+                '&.Mui-selected': {
+                  backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                  '&:hover': {
+                    backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)',
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+    [themeMode],
+  );
 
   useEffect(() => {
     const consent = getlocalStorage<boolean>('cookieConsent');
@@ -105,33 +138,11 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   }, []);
 
   useEffect(() => {
-    const root = document.documentElement;
-    const body = document.body;
-    const rootContainer = document.getElementById('root');
-
-    root.setAttribute('data-bs-theme', theme);
-    if (body) {
-      body.setAttribute('data-bs-theme', theme);
-    }
-    if (rootContainer) {
-      rootContainer.setAttribute('data-bs-theme', theme);
-    }
-
-    savelocalStorage('theme', theme);
-
-    return () => {
-      root.removeAttribute('data-bs-theme');
-      if (body) {
-        body.removeAttribute('data-bs-theme');
-      }
-      if (rootContainer) {
-        rootContainer.removeAttribute('data-bs-theme');
-      }
-    };
-  }, [theme]);
+    document.documentElement.setAttribute('data-theme', themeMode);
+    savelocalStorage('theme', themeMode);
+  }, [themeMode]);
 
   useEffect(() => {
-    // Load config and set axios baseURL (only once on mount)
     fetch('/config.yaml')
       .then(response => response.text())
       .then(yamlText => {
@@ -150,7 +161,6 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   }, []);
 
   useEffect(() => {
-    // start on any request
     const reqId = axios.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         loadingRef.current.continuousStart();
@@ -162,7 +172,6 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
         return config;
       }
     );
-    // complete on response or error
     const resId = axios.interceptors.response.use(
       (res: AxiosResponse) => {
         loadingRef.current.complete();
@@ -171,7 +180,8 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
       (err) => {
         console.error('HTTP Error:', err);
         loadingRef.current.complete();
-        const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
+        const errorMessage = err.response?.data?.error || err.response?.data?.detail || err.response?.data?.message 
+            || err.message || 'An error occurred';
         showToast(errorMessage, 'danger');
         return Promise.reject(err);
       }
@@ -183,8 +193,88 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
   }, [loadingRef, showToast]);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+    setThemeMode(prev => (prev === 'light' ? 'dark' : 'light'));
   };
+
+  // Sync submenu open state with URL
+  useEffect(() => {
+    setAboutOpen(location.pathname.startsWith('/about'));
+  }, [location.pathname]);
+
+  const handleAcceptCookies = () => {
+    savelocalStorage('cookieConsent', true);
+    setShowCookieBanner(false);
+  };
+
+  const drawerContent = (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <FontAwesomeIcon icon={faTasks} />
+          <Typography variant="h6" component="span">Todo</Typography>
+        </Box>
+        <IconButton onClick={toggleTheme} size="small">
+          <FontAwesomeIcon icon={isDarkTheme ? faSun : faMoon} />
+        </IconButton>
+      </Box>
+      <List sx={{ flexGrow: 1 }}>
+        <ListItemButton component={NavLink} to="/home" onClick={() => setMenuOpen(false)} selected={location.pathname.startsWith('/home')}>
+          <ListItemIcon><FontAwesomeIcon icon={faHome} /></ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItemButton>
+        {isAuthenticated && (role === 'user' || role === 'admin') && (
+          <ListItemButton component={NavLink} to="/user" onClick={() => setMenuOpen(false)} selected={location.pathname === '/user'}>
+            <ListItemIcon><FontAwesomeIcon icon={faUser} /></ListItemIcon>
+            <ListItemText primary="User" />
+          </ListItemButton>
+        )}
+        {isAuthenticated && role === 'admin' && (
+          <ListItemButton component={NavLink} to="/admin" onClick={() => setMenuOpen(false)} selected={location.pathname === '/admin'}>
+            <ListItemIcon><FontAwesomeIcon icon={faUsers} /></ListItemIcon>
+            <ListItemText primary="Admin" />
+          </ListItemButton>
+        )}
+        <ListItemButton component={NavLink} to="/contact/2?id=1&name=yan" onClick={() => setMenuOpen(false)} selected={location.pathname.startsWith('/contact')}>
+          <ListItemIcon><FontAwesomeIcon icon={faEnvelope} /></ListItemIcon>
+          <ListItemText primary="Contact" />
+        </ListItemButton>
+        
+        <ListItemButton onClick={() => setAboutOpen(!aboutOpen)}>
+          <ListItemIcon><FontAwesomeIcon icon={faInfoCircle} /></ListItemIcon>
+          <ListItemText primary="About" />
+          <FontAwesomeIcon icon={faChevronRight} style={{ transform: aboutOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+        </ListItemButton>
+        <Collapse in={aboutOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton sx={{ pl: 4 }} component={NavLink} to="/about/1" onClick={() => setMenuOpen(false)} selected={location.pathname.startsWith('/about')}>
+              <ListItemIcon><FontAwesomeIcon icon={faIdBadge} /></ListItemIcon>
+              <ListItemText primary="About Me" />
+            </ListItemButton>
+          </List>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        {!isAuthenticated && (
+          <ListItemButton component={NavLink} to="/register" onClick={() => setMenuOpen(false)} selected={location.pathname === '/register'}>
+            <ListItemIcon><FontAwesomeIcon icon={faUserPlus} /></ListItemIcon>
+            <ListItemText primary="Register" />
+          </ListItemButton>
+        )}
+        {!isAuthenticated ? (
+          <ListItemButton component={NavLink} to="/login" onClick={() => setMenuOpen(false)} selected={location.pathname === '/login'}>
+            <ListItemIcon><FontAwesomeIcon icon={faSignInAlt} /></ListItemIcon>
+            <ListItemText primary="Login" />
+          </ListItemButton>
+        ) : (
+          <ListItemButton component={NavLink} to="/logout" onClick={() => setMenuOpen(false)} selected={location.pathname === '/logout'}>
+            <ListItemIcon><FontAwesomeIcon icon={faSignOutAlt} /></ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItemButton>
+        )}
+      </List>
+    </Box>
+  );
 
   const breadcrumbItems = useMemo(() => ([
     {
@@ -213,204 +303,98 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
     url: '/'
   }), []);
 
-  const breadcrumbClassName = `flex-grow-1 rounded-3 px-3 py-2 shadow-sm ${isDarkTheme ? 'bg-dark text-white border border-secondary' : 'bg-white text-body border border-light'}`;
-  const breadcrumbItemClass = isDarkTheme ? 'text-white' : 'text-secondary';
-  const breadcrumbSeparatorClass = isDarkTheme ? 'text-secondary' : 'text-muted';
   const showHomeBreadcrumb = location.pathname.startsWith('/home');
 
-  const handleAcceptCookies = () => {
-    savelocalStorage('cookieConsent', true);
-    setShowCookieBanner(false);
-  };
-
-  const handleToggleCookieBanner = () => {
-    setShowCookieBanner(prev => !prev);
-  };
-
-  const mainContentClassName = menuOpen ? 'main-content main-content--blurred' : 'main-content';
-  const cookieBannerClassName = menuOpen ? 'cookie-banner main-content main-content--blurred' : 'cookie-banner main-content';
-
   return (
-    <div style={{ display: 'flex' }}>
-      {/* Mobile menu icon */}
-      {!menuOpen && (
-        <div className="menu-icon" onClick={() => setMenuOpen(true)}>☰</div>
-      )}
-  {/* Side nav */}
-      <nav
-        ref={navRef}
-        className={`side-nav${menuOpen ? ' open' : ''}`}
-        style={{
-          padding: '1rem',
-          width: '170px',
-          borderRight: '1px solid #ccc',
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          height: '100vh',
-          overflow: 'hidden'
-        }}
-      >
-        <div className="side-nav__header">
-          <div className="side-nav__title">
-            <FontAwesomeIcon icon={faTasks} />
-            <span>Todo</span>
-          </div>
-          <button
-            type="button"
-            className="side-nav__theme-toggle"
-            onClick={toggleTheme}
-            aria-pressed={isDarkTheme}
-            aria-label={`Activate ${isDarkTheme ? 'light' : 'dark'} theme`}
-            title={`Switch to ${isDarkTheme ? 'Light' : 'Dark'} Mode`}
-          >
-            <FontAwesomeIcon icon={isDarkTheme ? faSun : faMoon} />
-          </button>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', flexGrow: 1, overflowY: 'auto', paddingBottom: '1rem' }}>
-          <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : undefined} onClick={() => { setMenuOpen(false); setAboutOpen(false); }}>
-            <FontAwesomeIcon icon={faHome} style={{ marginRight: '0.5rem' }} /> Home
-          </NavLink>
-          {isAuthenticated && (role === 'user' || role === 'admin') && (
-            <NavLink to="/user" className={({ isActive }) => isActive ? 'active' : undefined} onClick={() => { setMenuOpen(false); setAboutOpen(false); }}>
-              <FontAwesomeIcon icon={faUser} style={{ marginRight: '0.5rem' }} /> User
-            </NavLink>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ display: 'flex' }}>
+        {/* Mobile Menu Button */}
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={() => setMenuOpen(true)}
+          sx={{ mr: 2, display: { md: 'none' }, position: 'fixed', top: 10, left: 10, zIndex: 1100 }}
+        >
+          <FontAwesomeIcon icon={faBars} />
+        </IconButton>
+
+        {/* Sidebar Drawer for Mobile */}
+        <Drawer
+          variant="temporary"
+          open={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          ModalProps={{ keepMounted: true }}
+          sx={{ display: { xs: 'block', md: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 } }}
+        >
+          {drawerContent}
+        </Drawer>
+
+        {/* Sidebar Permanent for Desktop */}
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            width: 240,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 }
+          }}
+          open
+        >
+          {drawerContent}
+        </Drawer>
+
+        <Box component="main" sx={{ flexGrow: 1, p: 3, width: { md: `calc(100% - 240px)` } }}>
+          {showHomeBreadcrumb && (
+            <Paper elevation={1} sx={{ 
+              mb: 2, 
+              p: 1,
+              '& .p-menuitem-text, & .p-menuitem-icon, & .p-breadcrumb-home': {
+                color: themeMode === 'dark' ? '#ffffff !important' : '#000000 !important'
+              },
+              '& .p-menuitem-separator': {
+                color: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.7) !important' : 'rgba(0, 0, 0, 0.7) !important'
+              }
+            }}>
+              <BreadCrumb model={breadcrumbItems} home={breadcrumbHome} style={{ border: 'none', background: 'transparent' }} />
+            </Paper>
           )}
-          {isAuthenticated && role === 'admin' && (
-            <NavLink to="/admin" className={({ isActive }) => isActive ? 'active' : undefined} onClick={() => { setMenuOpen(false); setAboutOpen(false); }}>
-              <FontAwesomeIcon icon={faUsers} style={{ marginRight: '0.5rem' }} /> Admin
-            </NavLink>
-          )}
-          <NavLink to="/contact/2?id=1&name=yan" className={({ isActive }) => isActive ? 'active' : undefined} onClick={() => { setMenuOpen(false); setAboutOpen(false); }}>
-            <FontAwesomeIcon icon={faEnvelope} style={{ marginRight: '0.5rem' }} /> Contact
-          </NavLink>
-          <div>
-            <NavLink
-              to="/about/1"
-              className={({ isActive }) => isActive ? 'active' : undefined}
-              onClick={() => setAboutOpen(prev => !prev)}
-              style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '0.5rem' }}
-            >
-              <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: '0.25rem' }} />
-              <span style={{ flexGrow: 1, textAlign: 'left' }}>About</span>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                style={{
-                  marginLeft: 'auto',
-                  transform: aboutOpen ? 'rotate(90deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.2s ease'
-                }}
-              />
-            </NavLink>
-            <Collapse in={aboutOpen} unmountOnExit>
-              <div className="side-nav__submenu">
-                <NavLink
-                  to="/about/1/about-me/3?id=1&name=yan"
-                  className={({ isActive }) => {
-                    const active = isActive || location.pathname.includes('/about-me');
-                    return `side-nav__submenu-link${active ? ' active' : ''}`;
-                  }}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <FontAwesomeIcon icon={faIdBadge} style={{ marginRight: '0.5rem' }} /> About Me
-                </NavLink>
-              </div>
-            </Collapse>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
-          {!isAuthenticated && (
-            <NavLink to="/register" className={({ isActive }) => isActive ? 'active' : undefined} onClick={() => { setMenuOpen(false); setAboutOpen(false); }}>
-              <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '0.5rem' }} /> Register
-            </NavLink>
-          )}
-          {!isAuthenticated ? (
-            <NavLink to="/login" className={({ isActive }) => isActive ? 'active' : undefined} onClick={() => { setMenuOpen(false); setAboutOpen(false); }}>
-              <FontAwesomeIcon icon={faSignInAlt} style={{ marginRight: '0.5rem' }} /> Login
-            </NavLink>
-          ) : (
-            <NavLink to="/logout" className={({ isActive }) => isActive ? 'active' : undefined} onClick={() => { setMenuOpen(false); setAboutOpen(false); }}>
-              <FontAwesomeIcon icon={faSignOutAlt} style={{ marginRight: '0.5rem' }} /> Logout
-            </NavLink>
-          )}
-        </div>
-      </nav>
-      {menuOpen && (
-        <div
-          className="side-nav-overlay"
-          onClick={() => setMenuOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-      {/* Main content */}
-      <div
-        className={mainContentClassName}
-        style={{ flex: 1, padding: '1rem' }}
-        data-bs-theme={theme}
-      >
-        {showHomeBreadcrumb && (
-          <div
-            className={isDarkTheme ? 'bg-dark text-white py-2 border-bottom border-secondary' : 'bg-light py-2 border-bottom'}
-            style={{ marginBottom: '1rem' }}
-          >
-            <Container fluid="lg" className="d-flex align-items-center">
-              <BreadCrumb
-                model={breadcrumbItems}
-                home={breadcrumbHome}
-                className={breadcrumbClassName}
-                data-bs-theme={theme}
-                pt={{
-                  root: { className: 'border-0 bg-transparent p-0' },
-                  menu: { className: 'mb-0 bg-transparent d-flex align-items-center gap-1' },
-                  menuitem: { className: `${breadcrumbItemClass} d-flex align-items-center` },
-                  action: { className: 'bg-transparent border-0 text-decoration-none' },
-                  label: { className: breadcrumbItemClass },
-                  icon: { className: breadcrumbItemClass },
-                  separator: { className: `${breadcrumbSeparatorClass} mx-2` }
-                }}
-              />
-            </Container>
-          </div>
-        )}
-        <Routes>
-          {/* Redirect root to /home */}
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route
-            path="/home"
-            element={<Home onToggleCookieBanner={handleToggleCookieBanner} isCookieBannerVisible={showCookieBanner} />}
-          >
-            <Route path="todo" element={<TodoList />} />
-          </Route>
-          <Route path="/about/:aboutId" element={<About />} >
-            <Route path="about-me/:aboutMeId" element={<AboutMe />} />
-          </Route>
-          <Route path="/contact/:id" element={<Contact />} />
-          <Route path="/register" element={<RegistrationPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route element={<PrivateRoute allowedRoles={['user', 'admin']} />}>
-            <Route path="/user" element={<UserPage />} />
-          </Route>
-          <Route element={<PrivateRoute allowedRoles={['admin']} />}>
-            <Route path="/admin" element={<AdminPage />} />
-          </Route>
-          <Route path="/logout" element={<Logout />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
+
+          <Routes>
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<Home onToggleCookieBanner={() => setShowCookieBanner(!showCookieBanner)} isCookieBannerVisible={showCookieBanner} />}>
+              <Route path="todo" element={<TodoList />} />
+            </Route>
+            <Route path="/about/:aboutId" element={<About />} >
+              <Route path="about-me/:aboutMeId" element={<AboutMe />} />
+            </Route>
+            <Route path="/contact/:id" element={<Contact />} />
+            <Route path="/register" element={<RegistrationPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route element={<PrivateRoute allowedRoles={['user', 'admin']} />}>
+              <Route path="/user" element={<UserPage />} />
+            </Route>
+            <Route element={<PrivateRoute allowedRoles={['admin']} />}>
+              <Route path="/admin" element={<AdminPage />} />
+            </Route>
+            <Route path="/logout" element={<Logout />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Box>
+      </Box>
       <LoadingBar color="#29d" height={3} ref={loadingRef} />
+      
       {showCookieBanner && (
-        <div className={cookieBannerClassName} style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: '#333', color:'white', padding: '1rem', borderTop: '1px solid #ccc', textAlign: 'center' }}>
-          <div>
-            By continuing to use this website, you agree that this website can store cookies on this device.&nbsp;&nbsp;
-          
-            <button onClick={handleAcceptCookies}>
-              Accept
-            </button>
-          </div>
-        </div>
+        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, p: 2, textAlign: 'center', zIndex: 1300 }} elevation={3}>
+          <Typography variant="body2" component="span" sx={{ mr: 2 }}>
+            By continuing to use this website, you agree that this website can store cookies on this device.
+          </Typography>
+          <Button variant="contained" size="small" onClick={handleAcceptCookies}>Accept</Button>
+        </Paper>
       )}
-    </div>
+    </ThemeProvider>
   );
 };
 

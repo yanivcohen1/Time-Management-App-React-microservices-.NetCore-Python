@@ -1,6 +1,6 @@
-# React + TypeScript + Vite App
+ial# React + TypeScript + Vite App
 
-A modern React application built with TypeScript and Vite, featuring a todo list, user authentication, role-based access control, and nested routing. The app uses Bootstrap for styling, PrimeReact components, and Axios for API calls.
+A modern React application built with TypeScript and Vite, featuring a todo list, user authentication, role-based access control, and nested routing. The app uses Material UI for styling, PrimeReact components, and Axios for API calls.
 
 ## Features
 
@@ -8,7 +8,7 @@ A modern React application built with TypeScript and Vite, featuring a todo list
 - **User Authentication**: Login/logout with role-based access (admin, user, guest)
 - **Nested Routing**: Dynamic routes with React Router v6
 - **Theming**: Light/dark mode support
-- **Responsive UI**: Bootstrap 5 and PrimeReact components
+- **Responsive UI**: Material UI and PrimeReact components
 - **Data Persistence**: Local storage for todos and user data
 - **Loading Indicators**: Global loading bar for API requests
 - **Animations**: Smooth transitions with CSS animations

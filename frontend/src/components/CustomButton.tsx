@@ -1,5 +1,6 @@
 // src/components/CustomButton.tsx
 import React from "react";
+import { Button } from "@mui/material";
 
 type ButtonVariant = "primary" | "secondary" | "danger";
 
@@ -16,17 +17,24 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   type = "button",
   variant = "primary",
 }) => {
-  const baseStyle = "btn";
-  const variants: Record<ButtonVariant, string> = {
-    primary: "btn-primary",
-    secondary: "btn-secondary",
-    danger: "btn-danger",
+  const getMuiColor = (v: ButtonVariant): "primary" | "secondary" | "error" => {
+    switch (v) {
+      case "primary": return "primary";
+      case "secondary": return "secondary";
+      case "danger": return "error";
+      default: return "primary";
+    }
   };
 
   return (
-    <button type={type} className={`${baseStyle} ${variants[variant]}`} onClick={onClick}>
+    <Button
+      type={type}
+      variant="contained"
+      color={getMuiColor(variant)}
+      onClick={onClick}
+    >
       {label}
-    </button>
+    </Button>
   );
 };
 

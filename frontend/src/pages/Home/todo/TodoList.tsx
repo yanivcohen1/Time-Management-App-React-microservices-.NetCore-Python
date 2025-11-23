@@ -3,19 +3,31 @@ import type { ChangeEvent } from 'react';
 import { getlocalStorage, savelocalStorage } from "../../../utils/storage"; // for data localstorage
 import { useAppContext } from "../../../context/AppContext"; // for events updates
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import Button from "react-bootstrap/Button";
-import Badge from "react-bootstrap/Badge";
-import Card from "react-bootstrap/Card";
-import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import ListGroup from "react-bootstrap/ListGroup";
-import Row from "react-bootstrap/Row";
-import Stack from "react-bootstrap/Stack";
-import Alert from "react-bootstrap/Alert";
-import Modal from "react-bootstrap/Modal";
-import Nav from "react-bootstrap/Nav";
+import {
+  Container,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  Box,
+  Grid,
+  Stack,
+  Chip,
+  List,
+  ListItem,
+  Checkbox,
+  IconButton,
+  InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Tabs,
+  Tab
+} from '@mui/material';
 import { useTheme } from "../../../hooks/useTheme";
 import "../../../animation/slide-right.css";
 import "../../../animation/fade.css";
@@ -138,181 +150,178 @@ const TodoList: React.FC = () => {
   const nodeRefs = useRef<Record<string, React.RefObject<HTMLElement>>>({});
 
   return (
-    <Container fluid="md" className="py-4">
-      <Row className="justify-content-center">
-        <Col xs={12} md={10} lg={8} xl={6}>
-          <Card className={`shadow-sm ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}>
-            <Card.Header className={isDarkTheme ? 'bg-dark text-white border-secondary' : 'bg-white'}>
-              <div className="d-flex justify-content-between align-items-center">
-                <h3 className="mb-0 d-flex align-items-center gap-2">
-                  <FontAwesomeIcon icon={faListCheck} />
-                  <span>To-Do List</span>
-                </h3>
-                <div className="d-flex gap-2">
-                  <Badge bg="success" pill>
-                    Active: {activeCount}
-                  </Badge>
-                </div>
-              </div>
-            </Card.Header>
-            <Card.Body className={isDarkTheme ? 'bg-dark text-white' : undefined}>
-              <Stack gap={3}>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Grid container justifyContent="center">
+        <Grid size={{ xs: 12, md: 10, lg: 8, xl: 6 }}>
+          <Card sx={{ boxShadow: 1 }}>
+            <CardHeader
+              title={
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <FontAwesomeIcon icon={faListCheck} />
+                    <Typography variant="h5" component="span">To-Do List</Typography>
+                  </Box>
+                  <Chip label={`Active: ${activeCount}`} color="success" size="small" />
+                </Box>
+              }
+            />
+            <CardContent>
+              <Stack spacing={3}>
                 {msg && (
-                  <Alert
-                    variant="info"
-                    className="mb-0"
-                  >
+                  <Alert severity="info">
                     <strong>User message:</strong> {msg}
                   </Alert>
                 )}
 
-                <Form>
-                  <Row className="g-3 align-items-end">
-                    <Col md={8}>
-                      <Form.Group controlId="todoInput">
-                        <Form.Label className={isDarkTheme ? 'text-white' : undefined}>Add a task</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter a to-do item"
-                          value={input}
-                          onChange={(e: ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
-                          className={isDarkTheme ? 'bg-dark text-white border-secondary' : undefined}
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col md={4} className="d-grid">
-                      <Button onClick={handleAdd} disabled={!input.trim()}>
+                <Box component="form">
+                  <Grid container spacing={3} alignItems="flex-end">
+                    <Grid size={{ md: 8 }}>
+                      <TextField
+                        fullWidth
+                        id="todoInput"
+                        label="Add a task"
+                        placeholder="Enter a to-do item"
+                        value={input}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid size={{ md: 4 }}>
+                      <Button
+                        variant="contained"
+                        onClick={handleAdd}
+                        disabled={!input.trim()}
+                        fullWidth
+                        sx={{ height: '56px' }} // Match TextField height
+                      >
                         Add Item
                       </Button>
-                    </Col>
-                  </Row>
-                </Form>
+                    </Grid>
+                  </Grid>
+                </Box>
 
-                <Form.Group controlId="todoSearch">
-                  <Form.Label className={isDarkTheme ? 'text-white' : undefined}>Search your todos</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text
-                      id="search-label"
-                      className={isDarkTheme ? 'bg-dark text-white border-secondary' : undefined}
-                    >
-                      Search
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="search"
-                      placeholder="Type to search..."
-                      value={query}
-                      onChange={e => setQuery(e.target.value)}
-                      aria-describedby="search-label"
-                      className={isDarkTheme ? 'bg-dark text-white border-secondary' : undefined}
-                    />
-                  </InputGroup>
-                </Form.Group>
+                <Box>
+                  <TextField
+                    fullWidth
+                    id="todoSearch"
+                    label="Search your todos"
+                    placeholder="Type to search..."
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    slotProps={{
+                      input: {
+                        startAdornment: <InputAdornment position="start">Search</InputAdornment>,
+                      },
+                    }}
+                  />
+                </Box>
 
-                <Nav
-                  variant="tabs"
-                  className="justify-content-center mb-3"
-                  activeKey={activeTab}
-                  onSelect={(k) => setActiveTab(k as 'all' | 'active' | 'complete')}
-                  data-bs-theme={isDarkTheme ? 'dark' : undefined}
+                <Tabs
+                  value={activeTab}
+                  onChange={(_, newValue) => setActiveTab(newValue)}
+                  centered
+                  sx={{ mb: 3 }}
                 >
-                  <Nav.Item>
-                    <Nav.Link eventKey="all">All ({allCount})</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link eventKey="active">Active ({activeCount})</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link eventKey="complete">Complete ({completeCount})</Nav.Link>
-                  </Nav.Item>
-                </Nav>
+                  <Tab label={`All (${allCount})`} value="all" />
+                  <Tab label={`Active (${activeCount})`} value="active" />
+                  <Tab label={`Complete (${completeCount})`} value="complete" />
+                </Tabs>
 
-                <Card className={`shadow-sm ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}>
-                  <Card.Body>
-                    <ListGroup
-                      variant="flush"
-                      className={`border rounded ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}
-                    >
+                <Card variant="outlined">
+                  <CardContent sx={{ p: 0 }}>
+                    <List>
                       <TransitionGroup component={null}>
-                    {filtered.map(todo => {
-                      let ref: React.RefObject<HTMLElement>;
-                      if (nodeRefs.current[todo.id]) {
-                        ref = nodeRefs.current[todo.id];
-                      } else {
-                        // @ts-expect-error RefObject type mismatch
-                        ref = createRef<HTMLElement>();
-                        nodeRefs.current[todo.id] = ref;
-                      }
+                        {filtered.map(todo => {
+                          let ref: React.RefObject<HTMLElement>;
+                          if (nodeRefs.current[todo.id]) {
+                            ref = nodeRefs.current[todo.id];
+                          } else {
+                            // @ts-expect-error RefObject type mismatch
+                            ref = createRef<HTMLElement>();
+                            nodeRefs.current[todo.id] = ref;
+                          }
 
-                      return (
-                        <CSSTransition key={todo.id} nodeRef={ref} timeout={500} classNames="slide">
-                          <ListGroup.Item
-                            // @ts-expect-error Ref type mismatch for ListGroup.Item
-                            ref={ref}
-                            className={`d-flex align-items-center py-3 ${isDarkTheme ? 'bg-dark text-white border-secondary' : ''}`}
-                          >
-                            <Form.Check
-                              type="checkbox"
-                              checked={todo.completed}
-                              onChange={() => handleToggleComplete(todo.id)}
-                            />
-                            <span className={`ms-3 flex-grow-1 ${todo.completed ? 'text-decoration-line-through text-muted' : ''}`} style={todo.completed ? {opacity: 0.6} : undefined}>{todo.text}</span>
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => handleDeleteRequest(todo)}
-                            >
-                              Delete
-                            </Button>
-                          </ListGroup.Item>
-                        </CSSTransition>
-                      );
-                    })}
-                  </TransitionGroup>
-                  {filtered.length === 0 && (
-                    <ListGroup.Item className={`text-center py-4 ${isDarkTheme ? 'bg-dark text-white border-secondary' : 'text-muted'}`}>
-                      Nothing to show yet. Try adding a new task above!
-                    </ListGroup.Item>
-                  )}
-                </ListGroup>
-                  </Card.Body>
+                          return (
+                            <CSSTransition key={todo.id} nodeRef={ref} timeout={500} classNames="slide">
+                              <ListItem
+                                // @ts-expect-error Ref type mismatch
+                                ref={ref}
+                                divider
+                                secondaryAction={
+                                  <Button
+                                    variant="outlined"
+                                    color="error"
+                                    size="small"
+                                    onClick={() => handleDeleteRequest(todo)}
+                                  >
+                                    Delete
+                                  </Button>
+                                }
+                              >
+                                <Checkbox
+                                  edge="start"
+                                  checked={todo.completed}
+                                  onChange={() => handleToggleComplete(todo.id)}
+                                />
+                                <Typography
+                                  sx={{
+                                    textDecoration: todo.completed ? 'line-through' : 'none',
+                                    opacity: todo.completed ? 0.6 : 1,
+                                    flexGrow: 1,
+                                    ml: 2
+                                  }}
+                                >
+                                  {todo.text}
+                                </Typography>
+                              </ListItem>
+                            </CSSTransition>
+                          );
+                        })}
+                      </TransitionGroup>
+                      {filtered.length === 0 && (
+                        <ListItem sx={{ justifyContent: 'center', py: 4 }}>
+                          <Typography color="textSecondary">
+                            Nothing to show yet. Try adding a new task above!
+                          </Typography>
+                        </ListItem>
+                      )}
+                    </List>
+                  </CardContent>
                 </Card>
               </Stack>
-              <Modal
-                show={showDeleteModal}
-                onHide={handleCancelDelete}
-                centered
-                backdrop="static"
-                keyboard={false}
-                contentClassName={isDarkTheme ? 'bg-dark text-white border-secondary' : undefined}
-                data-bs-theme={isDarkTheme ? 'dark' : undefined}
-                backdropClassName="custom-backdrop"
-                style={{zIndex: 2000}}
+
+              <Dialog
+                open={showDeleteModal}
+                onClose={handleCancelDelete}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
               >
-                <Modal.Header closeButton closeVariant={isDarkTheme ? 'white' : undefined} className={isDarkTheme ? 'border-secondary' : undefined}>
-                  <Modal.Title>Confirm delete</Modal.Title>
-                </Modal.Header>
-                <Modal.Body className={isDarkTheme ? 'bg-dark text-white' : undefined}>
-                  {todoToDelete ? (
-                    <>
-                      Are you sure you want to delete <strong>{todoToDelete.text}</strong>?
-                    </>
-                  ) : (
-                    'No item selected for deletion.'
-                  )}
-                </Modal.Body>
-                <Modal.Footer className={isDarkTheme ? 'border-secondary' : undefined}>
-                  <Button variant={isDarkTheme ? 'outline-light' : 'secondary'} onClick={handleCancelDelete}>
+                <DialogTitle id="alert-dialog-title">
+                  Confirm delete
+                </DialogTitle>
+                <DialogContent>
+                  <Typography>
+                    {todoToDelete ? (
+                      <>
+                        Are you sure you want to delete <strong>{todoToDelete.text}</strong>?
+                      </>
+                    ) : (
+                      'No item selected for deletion.'
+                    )}
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCancelDelete} color="inherit">
                     Cancel
                   </Button>
-                  <Button variant="danger" onClick={handleConfirmDelete}>
+                  <Button onClick={handleConfirmDelete} color="error" autoFocus>
                     Delete
                   </Button>
-                </Modal.Footer>
-              </Modal>
-            </Card.Body>
+                </DialogActions>
+              </Dialog>
+            </CardContent>
           </Card>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

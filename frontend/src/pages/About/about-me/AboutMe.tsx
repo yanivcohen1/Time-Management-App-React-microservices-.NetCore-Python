@@ -1,7 +1,6 @@
 import React from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import Stack from "react-bootstrap/Stack";
+import { Stack, FormControlLabel, Switch, Typography, Divider } from '@mui/material';
 import { useAboutSwitch } from "../AboutSwitchContext";
 
 const AboutMe: React.FC = () => {
@@ -18,19 +17,16 @@ const AboutMe: React.FC = () => {
 
   return (
     <div>
-      <hr />
-      <h4>About Me: User ID: {aboutMeId}</h4>
-      <p>
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="h6">About Me: User ID: {aboutMeId}</Typography>
+      <Typography variant="body1">
         Query: ID={queryId} name={queryName}
-      </p>
-      <Stack direction="horizontal" gap={2} className="justify-content-center mt-3">
-        <span className="fw-semibold">Shared Switch:</span>
-        <Form.Check
-          type="switch"
-          id="about-me-shared-switch"
+      </Typography>
+      <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
+        <Typography variant="subtitle1" fontWeight="bold">Shared Switch:</Typography>
+        <FormControlLabel
+          control={<Switch checked={isOn} onChange={handleToggle} />}
           label={isOn ? "On" : "Off"}
-          checked={isOn}
-          onChange={handleToggle}
         />
       </Stack>
     </div>

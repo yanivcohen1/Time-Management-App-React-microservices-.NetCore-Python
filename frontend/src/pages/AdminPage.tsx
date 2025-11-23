@@ -1,8 +1,6 @@
 // pages/AdminPage.tsx
 import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
+import { Container, Card, CardContent, Button, Typography } from '@mui/material';
 import axios from 'axios';
 import { useToast } from '../context/ToastContext';
 
@@ -20,15 +18,15 @@ const AdminPage: React.FC = () => {
     };
 
     return (
-        <Container className="p-4 text-center">
+        <Container sx={{ p: 4, textAlign: 'center' }}>
             <Card>
-                <Card.Body>
-                    <h1 className="text-3xl font-bold text-green-700">Admin Dashboard</h1>
-                    <p className="mt-2">Welcome, admin! You have full access.</p>
-                    <Button onClick={handleGetReports} variant="primary" className="mt-3">
+                <CardContent>
+                    <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', color: 'success.main' }}>Admin Dashboard</Typography>
+                    <Typography variant="body1" sx={{ mt: 2 }}>Welcome, admin! You have full access.</Typography>
+                    <Button onClick={handleGetReports} variant="contained" color="primary" sx={{ mt: 3 }}>
                         Get Reports
                     </Button>
-                </Card.Body>
+                </CardContent>
             </Card>
         </Container>
     );

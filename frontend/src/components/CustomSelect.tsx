@@ -1,6 +1,7 @@
 // src/components/CustomSelect.tsx
 import React from "react";
-import { useTheme } from "../hooks/useTheme";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material";
 
 export interface Option {
   label: string;
@@ -15,24 +16,25 @@ interface CustomSelectProps {
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, label }) => {
-  const theme = useTheme();
-  const isDarkTheme = theme === 'dark';
+  const handleChange = (event: SelectChangeEvent) => {
+    onChange(event.target.value as string);
+  };
 
   return (
-    <div className="d-flex flex-column gap-2">
-      {label && <label className={`form-label fw-semibold ${isDarkTheme ? 'text-light' : 'text-muted'}`}>{label}</label>}
-      <select
+    <FormControl fullWidth size="small">
+      {label && <InputLabel>{label}</InputLabel>}
+      <Select
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="form-select"
+        label={label}
+        onChange={handleChange}
       >
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
+          <MenuItem key={opt.value} value={opt.value}>
             {opt.label}
-          </option>
+          </MenuItem>
         ))}
-      </select>
-    </div>
+      </Select>
+    </FormControl>
   );
 };
 
