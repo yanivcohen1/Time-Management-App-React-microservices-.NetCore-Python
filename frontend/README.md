@@ -58,6 +58,7 @@ Generates a coverage report using Vitest.\
 ### `pnpm test:e2e`
 
 Runs end-to-end tests using Playwright.\
+you need to run the FE + BE first
 
 ### `pnpm build`
 

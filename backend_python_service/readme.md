@@ -131,6 +131,8 @@ pytest
 
 Or use VS Code's testing tab.
 
+you need to open *.py from tests folder for py tests discovery in vsc
+
 > **Windows event loop note**
 >
 > The service programmatically switches to `asyncio.WindowsSelectorEventLoopPolicy()` so Motor 2.x can run reliably on Windows. No manual action is required, but this is why the tests now pass without the "event loop is closed" error.
