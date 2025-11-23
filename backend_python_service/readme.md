@@ -76,10 +76,23 @@ python app/main.py --env prod   # Production
 
 The API will be available at `http://localhost:5000` (dev) or the configured production URL.
 
-### API Documentation
+API Documentation with Swagger
 
-- Swagger UI: http://127.0.0.1:5000/docs#/
-- ReDoc (FastAPI): http://127.0.0.1:5000/redoc
+When running in development mode, the API provides interactive documentation via Swagger UI.
+
+Accessing Swagger UI
+
+Start the application in development mode
+
+Open your browser and navigate to: http://localhost:5000/swagger or https://localhost:5001/swagger
+
+The Swagger UI will display all available endpoints with their parameters and response schemas
+
+You can test endpoints directly from the UI by clicking "Try it out"
+
+OpenAPI Specification
+
+The OpenAPI JSON specification is available at: http://localhost:5000/openapi/v1.json or https://localhost:5001/openapi/v1.json
 
 ## API Endpoints
 
