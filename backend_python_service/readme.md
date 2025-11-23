@@ -58,6 +58,7 @@ The application supports environment-specific configuration via YAML files:
 Configuration options include:
 
 - **JWT Key**: Secret key for JWT token signing
+- **JWT Timeout**: Token expiration time in minutes
 - **MongoDB Connection**: Database connection string
 - **Server URLs**: HTTP/HTTPS endpoints
 - **CORS Origins**: Allowed origins for CORS

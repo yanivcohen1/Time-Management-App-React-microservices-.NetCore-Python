@@ -30,7 +30,7 @@ with open(config_file) as f:
 
 SECRET_KEY = config['Jwt']['Key']
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = config['Jwt']['TimeoutMinutes']
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")  # Avoid bcrypt password length limits for demo.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")

@@ -1,5 +1,6 @@
 Jwt:
   Key: "prod-super-secret-key-change-this-in-production"
+  TimeoutMinutes: 30
 
 ConnectionStrings:
   MongoConnection: "mongodb://prod-server:27017/fast_api_auth_prod"

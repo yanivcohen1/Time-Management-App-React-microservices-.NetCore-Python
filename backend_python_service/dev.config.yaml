@@ -1,5 +1,6 @@
 Jwt:
   Key: "your-super-secret-key-here-change-in-production"
+  TimeoutMinutes: 30
 
 ConnectionStrings:
   MongoConnection: "mongodb://localhost:27017/fast_api_auth"
