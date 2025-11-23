@@ -1,5 +1,6 @@
 import asyncio
 import sys
+import os
 from datetime import datetime, timedelta
 from typing import Annotated, Dict, Optional
 from urllib.parse import urlparse
@@ -23,7 +24,8 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 import yaml
 
-with open('config.yaml') as f:
+config_file = os.environ.get('CONFIG_FILE', 'dev.config.yaml')
+with open(config_file) as f:
     config = yaml.safe_load(f)
 
 SECRET_KEY = config['Jwt']['Key']

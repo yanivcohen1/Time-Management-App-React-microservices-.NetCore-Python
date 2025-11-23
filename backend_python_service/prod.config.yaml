@@ -1,0 +1,11 @@
+Jwt:
+  Key: "prod-super-secret-key-change-this-in-production"
+
+ConnectionStrings:
+  MongoConnection: "mongodb://prod-server:27017/fast_api_auth_prod"
+
+Server:
+  Urls: "https://your-prod-domain.com"
+
+Cors:
+  AllowedOrigins: "https://your-prod-frontend.com"

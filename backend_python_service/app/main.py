@@ -1,5 +1,7 @@
 from pathlib import Path
 import sys
+import os
+import argparse
 from fastapi import Depends
 from typing import Annotated
 
@@ -25,6 +27,13 @@ async def read_admin_dashboard(current_admin: Annotated[User, Depends(get_curren
     return current_admin
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run the FastAPI app with environment config.")
+    parser.add_argument("--env", choices=["dev", "prod"], default="dev", help="Environment to run in (dev or prod). Defaults to dev.")
+    args = parser.parse_args()
+
+    # Set the config file based on environment
+    os.environ['CONFIG_FILE'] = f"{args.env}.config.yaml"
+
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=5000)

@@ -49,7 +49,12 @@ A role-based authentication API built with FastAPI, using JWT tokens, and MongoD
 
 ## Configuration
 
-The application uses `config.yaml` for configuration:
+The application supports environment-specific configuration via YAML files:
+
+- `dev.config.yaml` - Development configuration (default)
+- `prod.config.yaml` - Production configuration
+
+Configuration options include:
 
 - **JWT Key**: Secret key for JWT token signing
 - **MongoDB Connection**: Database connection string
@@ -58,12 +63,18 @@ The application uses `config.yaml` for configuration:
 
 ## Running the Application
 
-Start the server:
+Start the server with the default development configuration:
 ```bash
 python app/main.py
 ```
 
-The API will be available at `http://localhost:5000`
+Or specify the environment:
+```bash
+python app/main.py --env dev    # Development (default)
+python app/main.py --env prod   # Production
+```
+
+The API will be available at `http://localhost:5000` (dev) or the configured production URL.
 
 ## API Endpoints
 
@@ -113,7 +124,9 @@ backend_python_service/
 ├── tests/
 │   ├── conftest.py
 │   └── test_auth.py  # API tests (pytest/TestClient)
-├── config.yaml       # Configuration file
+├── dev.config.yaml   # Development configuration
+├── prod.config.yaml  # Production configuration
+├── config.yaml       # Legacy configuration (fallback)
 ├── seed.py           # Database seeding script (Beanie-based)
 ├── requirements.txt  # Python dependencies pinned for MongoDB 3.6
 └── readme.md         # This file
@@ -127,5 +140,6 @@ Common tasks from the repository root (after creating/activating the virtual env
 cd backend_python_service
 python seed.py
 python -m pytest
-python app/main.py
+python app/main.py                    # Run with dev config
+python app/main.py --env prod         # Run with prod config
 ```
