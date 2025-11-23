@@ -267,8 +267,8 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
       {showStickySave && stickyPosition === 'top' && renderStickySave('top')}
       {showStickySave && stickyPosition === 'bottom' && renderStickySave('bottom')}
 
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Grid container spacing={4} justifyContent="center">
+      <Container maxWidth="lg" sx={{ py: 0 }}>
+        <Grid container spacing={2} justifyContent="center">
           {isVisible && (
             <Grid size={{ xs: 12, md: 12, lg: 12 }}>
               <Card sx={{ boxShadow: 1 }}>

@@ -349,7 +349,7 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
         <Box component="main" sx={{ flexGrow: 1, p: 3, width: { md: `calc(100% - 240px)` } }}>
           {showHomeBreadcrumb && (
             <Paper elevation={1} sx={{ 
-              mb: 2, 
+              mb: 1, 
               p: 1,
               '& .p-menuitem-text, & .p-menuitem-icon, & .p-breadcrumb-home': {
                 color: themeMode === 'dark' ? '#ffffff !important' : '#000000 !important'
