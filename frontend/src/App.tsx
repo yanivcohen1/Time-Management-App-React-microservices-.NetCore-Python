@@ -139,6 +139,7 @@ const InnerApp: React.FC<InnerAppProps> = ({ loadingRef }) => {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', themeMode);
+    document.documentElement.setAttribute('data-bs-theme', themeMode);
     savelocalStorage('theme', themeMode);
   }, [themeMode]);
 

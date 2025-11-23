@@ -274,10 +274,9 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
                 <CardContent>
                   <Stack gap={3}>
                     <div ref={inputRef}>
-                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>App Context: {user ?? 'No user logged in'}</Typography>
                       <Card variant="outlined" sx={{ bgcolor: isDarkTheme ? 'grey.900' : 'grey.50' }}>
                         <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', '&:last-child': { pb: 2 } }}>
-                          
+                          <Typography variant="subtitle2" color="text.secondary">App Context: {user ?? 'No user logged in'}</Typography>
                           <Button variant="outlined" color="primary" size="small" onClick={updateI} startIcon={<FontAwesomeIcon icon={faUser} />}>
                             Set AppContext User to Alice
                           </Button>
@@ -286,9 +285,9 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
                     </div>
 
                     <div>
-                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>Global Storage: {global ?? 'No user logged in'}</Typography>
                       <Card variant="outlined" sx={{ bgcolor: isDarkTheme ? 'grey.900' : 'grey.50' }}>
                         <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', '&:last-child': { pb: 2 } }}>
+                          <Typography variant="subtitle2" color="text.secondary">Global Storage: {global ?? 'No user logged in'}</Typography>
                           <Button variant="outlined" color="success" size="small" onClick={() => setGlobalstate('global Alice')} startIcon={<FontAwesomeIcon icon={faList} />}>
                             Set global User to Alice
                           </Button>
