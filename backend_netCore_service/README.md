@@ -32,6 +32,8 @@ For MongoDB, no migrations are needed as collections are created dynamically.
 
 ```pwsh
 cd d:\Temp\Time-Management-App\backend_netCore_service\AuthApi
+dotnet run // default is dev
+// OR same by sepecify it
 dotnet run -- --env dev
 ```
 
