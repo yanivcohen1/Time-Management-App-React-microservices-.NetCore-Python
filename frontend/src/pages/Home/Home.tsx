@@ -271,7 +271,7 @@ const Home: React.FC<HomeProps> = ({ onToggleCookieBanner, isCookieBannerVisible
         <Grid container spacing={2} justifyContent="center">
           {isVisible && (
             <Grid size={{ xs: 12, md: 12, lg: 12 }}>
-              <Card sx={{ boxShadow: 1 }}>
+              <Card variant="outlined" sx={{ boxShadow: 1 }}>
                 <CardHeader
                   title={
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>

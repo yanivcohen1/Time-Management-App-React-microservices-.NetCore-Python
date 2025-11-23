@@ -52,7 +52,7 @@ const LoginPage: React.FC = () => {
 
     return (
         <Container sx={{ p: 4, textAlign: 'center' }}>
-            <Card>
+            <Card variant="outlined">
                 <CardContent>
                     <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold', mb: 4 }}>
                         Login Page

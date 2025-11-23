@@ -150,7 +150,7 @@ const TodoList: React.FC = () => {
       <Container maxWidth="lg" sx={{ py: 0 }}>
         <Grid container justifyContent="center">
           <Grid size={{ xs: 12, md: 12, lg: 12, xl: 12 }}>
-            <Card sx={{ boxShadow: 1 }}>
+            <Card variant="outlined" sx={{ boxShadow: 1 }}>
               <CardHeader
                 title={
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

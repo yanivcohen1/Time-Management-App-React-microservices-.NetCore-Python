@@ -13,7 +13,7 @@ const AboutContent: React.FC = () => {
 
     return (
         <Container sx={{ p: 4, textAlign: 'center' }}>
-            <Card>
+            <Card variant="outlined">
                 <CardContent>
                     <Typography variant="h4" component="h1" gutterBottom>About</Typography>
                     <Stack spacing={3} alignItems="center">

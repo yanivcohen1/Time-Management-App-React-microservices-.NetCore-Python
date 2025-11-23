@@ -210,7 +210,7 @@ const RegistrationPage: React.FC = () => {
       <Container>
         <Grid container justifyContent="center">
           <Grid size={{ xs: 12, md: 10, lg: 8, xl: 6 }}>
-            <Card className="registration-card mx-auto">
+            <Card variant="outlined" className="registration-card mx-auto">
               <CardContent>
                 <Typography variant="h4" component="h1" className="registration-title" gutterBottom>
                   Registration

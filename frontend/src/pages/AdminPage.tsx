@@ -19,7 +19,7 @@ const AdminPage: React.FC = () => {
 
     return (
         <Container sx={{ p: 4, textAlign: 'center' }}>
-            <Card>
+            <Card variant="outlined">
                 <CardContent>
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', color: 'success.main' }}>Admin Dashboard</Typography>
                     <Typography variant="body1" sx={{ mt: 2 }}>Welcome, admin! You have full access.</Typography>

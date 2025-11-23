@@ -11,7 +11,7 @@ const MyComponent: React.FC = () => {
 
     return (
         <Container sx={{ p: 4, textAlign: 'center' }}>
-            <Card>
+            <Card variant="outlined">
                 <CardContent>
                     <Typography variant="h4" component="h1" gutterBottom>Contact</Typography>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Query: ID={id} name={name}</Typography>

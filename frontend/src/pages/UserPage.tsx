@@ -12,7 +12,7 @@ const UserPage: React.FC = () => {
     const [global] = useState<string>(getGlobal);
     return (
         <Container sx={{ p: 4, textAlign: 'center' }}>
-            <Card>
+            <Card variant="outlined">
                 <CardContent>
                     <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', color: 'indigo.700' }}>
                         User Page
