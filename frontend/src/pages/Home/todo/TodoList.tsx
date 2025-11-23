@@ -19,7 +19,6 @@ import {
   List,
   ListItem,
   Checkbox,
-  IconButton,
   InputAdornment,
   Dialog,
   DialogTitle,
@@ -28,7 +27,6 @@ import {
   Tabs,
   Tab
 } from '@mui/material';
-import { useTheme } from "../../../hooks/useTheme";
 import "../../../animation/slide-right.css";
 import "../../../animation/fade.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -43,8 +41,6 @@ const TodoList: React.FC = () => {
   const [input, setInput] = useState<string>('');
   const { user } = useAppContext();
   const [msg, setMsg] = useState<string>("");
-  const theme = useTheme();
-  const isDarkTheme = theme === 'dark';
 
   // Load todos from localStorage
   const initTodo = (): Todo[] => {
@@ -147,7 +143,7 @@ const TodoList: React.FC = () => {
   const completeCount = todos.filter(t => t.completed).length;
 
   // Manage refs for each list item to avoid findDOMNode
-  const nodeRefs = useRef<Record<string, React.RefObject<HTMLElement>>>({});
+  const nodeRefs = useRef<Record<string, React.RefObject<HTMLLIElement>>>({});
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -231,19 +227,17 @@ const TodoList: React.FC = () => {
                     <List>
                       <TransitionGroup component={null}>
                         {filtered.map(todo => {
-                          let ref: React.RefObject<HTMLElement>;
+                          let ref: React.RefObject<HTMLLIElement>;
                           if (nodeRefs.current[todo.id]) {
                             ref = nodeRefs.current[todo.id];
                           } else {
-                            // @ts-expect-error RefObject type mismatch
-                            ref = createRef<HTMLElement>();
+                            ref = createRef<HTMLLIElement>() as React.RefObject<HTMLLIElement>;
                             nodeRefs.current[todo.id] = ref;
                           }
 
                           return (
                             <CSSTransition key={todo.id} nodeRef={ref} timeout={500} classNames="slide">
                               <ListItem
-                                // @ts-expect-error Ref type mismatch
                                 ref={ref}
                                 divider
                                 secondaryAction={
