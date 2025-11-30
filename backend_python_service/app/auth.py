@@ -22,6 +22,7 @@ from jose import JWTError, jwt
 from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 import yaml
 
 config_file = os.environ.get('CONFIG_FILE', os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dev.config.yaml'))
@@ -35,7 +36,17 @@ ACCESS_TOKEN_EXPIRE_MINUTES = config['Jwt']['TimeoutMinutes']
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")  # Avoid bcrypt password length limits for demo.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
-app = FastAPI(title="Role-based Auth API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    yield
+    global mongo_client, mongo_loop
+    if mongo_client is not None:
+        mongo_client.close()
+        mongo_client = None
+    mongo_loop = None
+
+app = FastAPI(title="Role-based Auth API", lifespan=lifespan)
 
 origins = config['Cors']['AllowedOrigins'].split(',')
 app.add_middleware(
@@ -124,20 +135,6 @@ async def ensure_beanie_initialized() -> None:
         UserDocument.get_settings()
     except CollectionWasNotInitialized:
         await init_db(force=True)
-
-
-@app.on_event("startup")
-async def on_startup() -> None:
-    await init_db()
-
-
-@app.on_event("shutdown")
-async def on_shutdown() -> None:
-    global mongo_client, mongo_loop
-    if mongo_client is not None:
-        mongo_client.close()
-        mongo_client = None
-    mongo_loop = None
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
