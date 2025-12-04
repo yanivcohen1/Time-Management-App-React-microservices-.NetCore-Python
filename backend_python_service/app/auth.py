@@ -46,7 +46,7 @@ async def lifespan(app: FastAPI):
         mongo_client = None
     mongo_loop = None
 
-app = FastAPI(title="Role-based Auth API", lifespan=lifespan)
+app = FastAPI(title="Role-based Auth API", lifespan=lifespan, redoc_url="/redoc")
 
 origins = config['Cors']['AllowedOrigins'].split(',')
 app.add_middleware(

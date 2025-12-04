@@ -88,7 +88,7 @@ Start the application in development mode
 
 Open your browser and navigate to:
 - for swagger API http://127.0.0.1:5000/docs#/
-- for fastAPI http://127.0.0.1:5000/redoc
+- for fastAPI http://127.0.0.1:5000/redoc#/
 
 The Swagger UI will display all available endpoints with their parameters and response schemas
 
