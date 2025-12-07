@@ -75,7 +75,7 @@ Each service has its own detailed setup instructions. Please refer to the respec
 
 ## Track Status
 
-<img width="2110" height="1436" alt="image" src="https://github.com/user-attachments/assets/8815bc9b-d490-465f-98e3-420887c7fec9" />
+<img width="2215" height="1443" alt="image" src="https://github.com/user-attachments/assets/dc5b4148-2ee7-46e7-b0df-7852e084c125" />
 
 ## Board page
 
@@ -83,7 +83,7 @@ Each service has its own detailed setup instructions. Please refer to the respec
 
 ## Ligth mode
 
-<img width="2126" height="1447" alt="image" src="https://github.com/user-attachments/assets/cc75d999-9c00-42d4-b54d-b8ad284c0cfa" />
+<img width="2220" height="1412" alt="image" src="https://github.com/user-attachments/assets/7fa0b573-2ee4-47df-a333-8c27563a9230" />
 
 ## Mobile mode
 
