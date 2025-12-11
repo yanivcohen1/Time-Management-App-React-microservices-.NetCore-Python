@@ -75,7 +75,7 @@ Each service has its own detailed setup instructions. Please refer to the respec
 
 ## Track Status
 
-<img width="2115" height="1660" alt="image" src="https://github.com/user-attachments/assets/3f7ac632-a9b3-43db-b423-88b98055721a" />
+<img width="2262" height="1440" alt="image" src="https://github.com/user-attachments/assets/edb01bb2-1155-4b27-9ff3-44f66a0bd4a6" />
 
 ## Board page
 
