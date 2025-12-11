@@ -6,7 +6,7 @@ A role-based authentication API built with FastAPI, using JWT tokens, and MongoD
 
 - JWT-based authentication
 - Role-based access control (admin/user roles)
-- MongoDB user storage using Beanie documents
+- MongoDB user storage using Beanie ODM documents and Motor (Async MongoDB)
 - CORS support
 - Configurable via YAML
 - API Documentation with Swagger
